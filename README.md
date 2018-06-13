@@ -1,1 +1,3 @@
-# Authorization
+#AuthorizationWeb
+
+Express+Sequelize+jwt-simple

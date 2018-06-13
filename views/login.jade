@@ -1,0 +1,27 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible', content='ie=edge')
+    title 登录授权申请系统
+    link(rel='stylesheet', href='libs/layui/css/layui.css')
+    link(rel='stylesheet', href='stylesheets/login.css')
+    style.
+  body
+    #title 欢迎来到南京国图授权申请系统
+    .layui-container
+      h2 用户登录
+      form#form-login.layui-form
+        .layui-form-item
+          input#input-phone.layui-input(type='text', name='', placeholder='手机号', autocomplete='off', lay-verify='phone')
+        .layui-form-item
+          input#input-captcha.layui-input(type='text', name='', placeholder='验证码', autocomplete='off', lay-verify='pass')
+          #verify-container.verify-img
+        .layui-form-item
+          button#btn-login.layui-btn(lay-submit='', lay-filter='*') 登录
+          button.layui-btn(type='reset') 重置
+    script(src='javascripts/jquery-3.3.1.min.js')
+    script(src='libs/layui/layui.js')
+    script(src='libs/gVerify.js')
+    script(src='javascripts/login.js')

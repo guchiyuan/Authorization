@@ -1,0 +1,28 @@
+html,
+  body {
+    font: 14px "Microsoft YaHei";
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    /* overflow: hidden; */
+  }
+
+  .layui-fluid {
+    padding: 2%;
+  }
+
+  .layui-btn {
+    /* background-color: #6b7bec; */
+    background-color: #555fc3;
+    border: #555fc3
+  }
+
+  .layui-form-label{
+    padding: 9px 10px;
+    width: 85px;
+  }
+
+  .layui-form-select dl {
+    max-height: 200px
+  }

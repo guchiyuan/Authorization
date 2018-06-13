@@ -1,0 +1,240 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible', content='ie=edge')
+    title 南京国图网上授权申请系统
+    link(rel='stylesheet', href='libs/layui/css/layui.css')
+    // <link href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet">
+    link(href='libs/bootstrap-table/bootstrap-table.min.css', rel='stylesheet')
+    link(rel='stylesheet', href='stylesheets/style.css')
+    // <link href="stylesheets/fSelect.css" rel="stylesheet" type="text/css">
+    // <link href="https://cdn.bootcss.com/amazeui/2.7.2/css/amazeui.css" rel="stylesheet">
+    style.
+  body
+    // <div class="layui-fluid">
+    .layui-row
+      #side-bar.layui-col-md1
+        header
+          span 南京国图
+          br
+          span 授权申请系统
+        .side-bar-btn
+          ul
+            li
+              button#btn-applyAuthenrization.layui-btn 我的申请
+            li
+              button#btn-checkUsers.layui-btn 审核用户
+            li
+              button#btn-checkApplications.layui-btn 审核申请
+            li
+              button#btn-needAuthority.layui-btn 制作授权
+            //
+              <li>
+              <button class="layui-btn" id="btn-userInfo">个人信息</button>
+              </li>
+      #main-container.layui-col-md11
+        #top-bar(style='text-align: right')
+          a#welcomeUser(href='javascript:void(0)')
+          | &nbsp&nbsp&nbsp
+          a#logout(href='javascript:void(0)') 退出登录
+        #content-container.layui-row
+          #content-apply.layui-col-md9.content(style='display: none')
+            .title
+              span 我的申请
+              button#btn-addApplication.layui-btn.layui-btn-sm(style='float: right;display: none')
+                i.layui-icon 
+            #filter-container
+              form.layui-form(action='')
+                .layui-form-item(style='width: 50%')
+                  label.layui-form-label(for='shztFilter', style='font-size: 16px; font-weight: bold; text-align: left; padding-left: 0') 审核状态：
+                  .layui-input-block
+                    select#shztFilter.layui-select(name='shztFilter', lay-verify='', lay-filter='shztFilter')
+                      option(value='', selected='') 全部
+                      option(value='1') 待认证
+                      option(value='2') 待审核
+                      option(value='3') 一审通过
+                      option(value='4') 二审通过
+                      option(value='5') 三审通过
+                      option(value='6') 授权失败
+                      option(value='7') 授权成功
+                      option(value='8') 审核完成
+                      option(value='9') 不予办理
+                    // <button id="btn-shztFilter" class="layui-btn">查询</button>
+              //
+                <div class="layui-form-item">
+                <span class="queryResult"></span>
+                </div>
+            //
+              <div class="layui-col-md1 filter" id="">待认证</div>
+              <div class="layui-col-md1 filter" id="">待审核</div>
+              <div class="layui-col-md1 filter" id="">一审通过</div>
+              <div class="layui-col-md1 filter" id="">二审通过</div>
+              <div class="layui-col-md1 filter" id="">二审通过</div>
+              <div class="layui-col-md1 filter" id="">授权成功</div>
+              <div class="layui-col-md1 filter" id="">授权失败</div>
+              <div class="layui-col-md1 filter" id="">审核完成</div>
+              <div class="layui-col-md1 filter" id="">不予办理</div>
+          table#applyHistoryTable.myTable
+        #content-init.layui-col-md9.content
+        #content-checkUsers.layui-col-md9.content(style='display: none')
+          .title
+            span 审核用户
+            //
+              <button id='btn-addApplication' class="layui-btn layui-btn-sm" style="float: right">
+              <i class="layui-icon">&#xe654;</i>
+              </button>
+          //
+            <div class="" id="filter-container">
+            <div class="layui-col-md2 filter" id="">待认证</div>
+            <div class="layui-col-md2 filter" id="">初审通过</div>
+            <div class="layui-col-md2 filter" id="">通过认证</div>
+            <div class="layui-col-md2 filter" id="">未通过认证</div>
+            </div>
+          .layui-form-item(style='width: 20%;')
+            //
+              <div>
+              <input id="input-queryUser" type="text" name="input-query" required placeholder="输入手机号" autocomplete="off" class="layui-input layui-col-md6"
+              lay-filter="query-filter">
+              </div>
+              <div>
+              <button id="btn-queryUser" class="layui-btn layui-btn-sm" type="button" name="refresh" title="查询">
+              查询
+              </button>
+              </div>
+          table#uncheckedUsersTable.myTable
+        #content-checkAppplications.layui-col-md9.content(style='display: none')
+          .title
+            span 审核申请
+            //
+              <button id='btn-addApplication' class="layui-btn layui-btn-sm" style="float: right">
+              <i class="layui-icon">&#xe654;</i>
+              </button>
+          //
+            <div class="" id="filter-container">
+            <div class="layui-col-md2 filter" id="">待认证</div>
+            <div class="layui-col-md2 filter" id="">初审通过</div>
+            <div class="layui-col-md2 filter" id="">通过认证</div>
+            <div class="layui-col-md2 filter" id="">未通过认证</div>
+            </div>
+          table#uncheckedApplicationsTable.myTable
+        #content-needAuthority.layui-col-md9.content(style='display: none')
+          .title
+            span 制作授权
+          //
+            <div class="" id="filter-container">
+            <div class="layui-col-md2 filter" id="">待认证</div>
+            <div class="layui-col-md2 filter" id="">初审通过</div>
+            <div class="layui-col-md2 filter" id="">通过认证</div>
+            <div class="layui-col-md2 filter" id="">未通过认证</div>
+            </div>
+          table#needAuthorityTable.myTable
+        #user-info.layui-col-md3
+          .title
+            span 我的信息
+          form.layui-form(action='')
+            .layui-form-item
+              label.layui-form-label(for='input-sqr') 申请人
+              .layui-input-block
+                input#input-sqr.layui-input(type='text', name='input-sqr', required='', lay-verify='required', placeholder='请输入申请人姓名', autocomplete='off')
+            .layui-form-item
+              label.layui-form-label(for='select-sqrlx') 申请人类型
+              .layui-input-block.layui-form(lay-filter='select-sqrlx-filter')
+                select#select-sqrlx(name='select-sqrlx', lay-verify='required', lay-filter='sqrlx-filter')
+                  option(value='') 请选择
+                  option(value='0') 甲方用户
+                  option(value='1') 内部用户
+            #div-sqrdw.layui-form-item
+              label.layui-form-label(for='input-sqrdw') 申请人单位
+              .layui-input-block
+                input#input-sqrdw.layui-input(type='text', name='input-sqrdw', required='', lay-verify='required', placeholder='请输入单位名称', autocomplete='off', lay-filter='sqrdw-filter')
+            #div-xmzxx.layui-form-item
+              label.layui-form-label(for='select-xmzxx') 项目组信息
+              .layui-input-block.layui-form(lay-filter='xmzxx-filter')
+                select#select-xmzxx(name='select-xmzxx', lay-verify='required', lay-filter='xmzxx-filter')
+                  option(value='') 请选择
+            #select-ssqy.layui-form-item
+              label.layui-form-label(for='select-city') 所属区域
+              .layui-input-block.layui-form(lay-filter='select-ssqy-filter')
+                select#select-province.select-ssqy(name='select-province', lay-verify='required', lay-filter='province-filter')
+                  option(value='')
+                select#select-city.select-ssqy(name='select-city', lay-filter='city-filter')
+                  option(value='')
+                select#select-district.select-ssqy(name='select-district', lay-filter='district-filter')
+                  option(value='')
+            #show-ssqy.layui-form-item(style='display: none')
+              label.layui-form-label(for='') 所属区域
+              .layui-input-block
+                input#input-ssqy.layui-input(type='text', name='input-ssqy', required='', lay-verify='', placeholder=' 请选择所属区域', autocomplete='off', lay-filter='ssqy-filter')
+            .layui-form-item
+              label.layui-form-label(for='input-lxdh') 手机号
+              .layui-input-block
+                input#input-lxdh.layui-input.uneditable(type='text', name='input-lxdh', required='', lay-verify='phone', placeholder='请输入手机号', autocomplete='off')
+            .layui-form-item
+              label.layui-form-label(for='input-wechat') 微信账号
+              .layui-input-block
+                input#input-wechat.layui-input(type='text', name='input-wechat', required='', lay-verify='', placeholder='请输入微信账号', autocomplete='off')
+            .layui-form-item
+              label.layui-form-label(for='input-jsyx') 邮箱
+              .layui-input-block
+                input#input-jsyx.layui-input(type='email', name='input-jsyx', required='', lay-verify='required', placeholder='请输入邮箱地址', autocomplete='off')
+            #div-zt.layui-form-item(style='display: none')
+              label.layui-form-label(for='input-zt') 认证状态
+              .layui-input-block
+                // <input id="input-zt" type="text" name="input-zt" required placeholder="" autocomplete="off" class="layui-input">
+                span#show-zt
+            .layui-form-item
+              div(style='text-align: center;')
+                button#btn-submitUserInfo.layui-btn(lay-submit='', lay-filter='formUserInfo')
+                button#btn-reset.layui-btn(type='reset') 重置
+    // </div>
+    //
+      <div id="div-allowShyj" style="display: none">
+      <div class="layui-form-item" style="margin: 5%">
+      <label class="">
+      <span>审核意见</span>
+      </label>
+      <select class="layui-select" id="select-shyj" name="select-shyj" lay-verify="required" lay-filter="shyj-filter" style="width: 50%">
+      <option selected="selected" disabled="disabled">请选择</option>
+      <option value="合作单位同意认证">合作单位同意认证</option>
+      <option value="我觉得你很不错">我觉得你很不错</option>
+      <option value="其它意见">其它意见</option>
+      </select>
+      </div>
+      <div class="layui-form-item" style="margin: 5%;">
+      <label class="">
+      <span>其它意见</span>
+      </label>
+      <textarea class="" name="input-allowShyj" id="input-allowShyj" cols="40" rows="5" style="width: 100%; margin-top: 10px">
+      </textarea>
+      </div>
+      </div>
+    #div-refuseShyj(style='display: none')
+      // <form class="layui-form">
+      .layui-form-item(style='margin: 5%')
+        label
+          span 审核意见
+        select#select-shyj.layui-select.select-refuseshyj(name='select-shyj', lay-verify='required', lay-filter='shyj-filter', style='width: 50%')
+          //
+            <option selected="selected" disabled="disabled">请选择</option>
+            <option value="其它意见">其它意见</option>
+      // </form>
+      .layui-form-item.refuseShyj(style='margin: 5%;')
+        label
+          span 其它意见
+        textarea(name='input-refuseShyj', id='', cols='40', rows='5', style='width: 100%; margin-top: 10px')
+      // </form>
+    script#select-tpl(type='text/x-tpl-handlebars').
+      {{#option}}
+      <option value="{{dm}}">{{mc}}</option>
+      {{/option}}
+    script(src='libs/handlebars/handlebars-v4.0.5.min.js')
+    script(src='javascripts/jquery-3.3.1.min.js')
+    // <script src="javascripts/jquery-2.1.1.min.js"></script>
+    // <script src="libs/bootstrap/js/bootstrap-v3.min.js"></script>
+    script(src='libs/bootstrap-table/bootstrap-table.min.js')
+    script(src='libs/bootstrap-table/bootstrap-table-zh-CN.min.js')
+    script(src='libs/layui/layui.js')
+    // <script src="https://cdn.bootcss.com/amazeui/2.7.2/js/amazeui.min.js"></script>
+    script(src='javascripts/checkPanel.js')
