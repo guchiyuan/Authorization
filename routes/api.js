@@ -976,7 +976,7 @@ async function SendAuthority(appInfos) {
 router.get('/suggestionsjscy',  catchAsyncErrors(async (req, res) => {
 
     let jsdms = await orm.option.JSXX.findAll();
-    let jsdm = jsdms.map(d => { return { value: d.DM} });
+    let jsdm = jsdms.map(d => { return { value: d.DM, label:d.MC} });
 
 
     let ssbms = await orm.User.aggregate("SSBM", 'DISTINCT', { plain: false });
@@ -989,17 +989,53 @@ router.get('/suggestionsjscy',  catchAsyncErrors(async (req, res) => {
     return res.json({code:"0000",data:{'jsdm':jsdm,'ssbm':ssbm,'ssxmz':ssxmz}})
 }));
 
-router.get('/suggestionscpdj',  catchAsyncErrors(async (req, res) => {
+router.get('/selectionscpdj',  catchAsyncErrors(async (req, res) => {
     let dwdmArray = await orm.option.DWXX.findAll();
-    let dwdm = dwdmArray.map(d => { return { value: d.DM} });
+    let dwdm = dwdmArray.map(d => { return { value: d.DM, label:d.DM + ' ' + d.MC, index:d.INDEX} });
 
     let dwmcArray = await orm.option.DWXX.findAll();
-    let dwmc = dwmcArray.map(d => { return { value: d.MC} });
+    let dwmc = dwmcArray.map(d => { return { value: d.MC, label:d.MC, index:d.INDEX} });
 
     let cpdmArray = await orm.option.CPLX.findAll();
-    let cpdm = cpdmArray.map(d => { return { value: d.DM} });
+    let cpdm = cpdmArray.map(d => { return { value: d.DM, label:d.MC+'('+ d.DM +')', index:d.INDEX} });
 
-    return res.json({code:"0000",data:{xzqdm:dwdm,xzqmc:dwmc,cpdm:cpdm}})
+    let xmjlArray = await orm.User.findAll({
+        where: {
+            [orm.Sequelize.Op.or]: [{jsdm: 7},{jsdm: {[orm.Sequelize.Op.like]:'7,%'}},{jsdm: {[orm.Sequelize.Op.like]:'%,7,%'}},{jsdm: {[orm.Sequelize.Op.like]:'%,7'}}]
+        }
+    });
+    let xmjl = xmjlArray.map(d => { return { value: d.INDEX, label: d.JSCY} });
+
+    let csrArray = await orm.User.findAll({
+        where: {
+            [orm.Sequelize.Op.or]: [{jsdm: 3},{jsdm: {[orm.Sequelize.Op.like]:'3,%'}},{jsdm: {[orm.Sequelize.Op.like]:'%,3,%'}},{jsdm: {[orm.Sequelize.Op.like]:'%,3'}}]
+        }
+    });
+    let csr = csrArray.map(d => { return { value: d.INDEX, label: d.JSCY} });
+
+    let fsrArray = await orm.User.findAll({
+        where: {
+            [orm.Sequelize.Op.or]: [{jsdm: 4},{jsdm: {[orm.Sequelize.Op.like]:'4,%'}},{jsdm: {[orm.Sequelize.Op.like]:'%,4,%'}},{jsdm: {[orm.Sequelize.Op.like]:'%,4'}}]
+        }
+    });
+    let fsr = fsrArray.map(d => { return { value: d.INDEX, label: d.JSCY} });
+
+    let sqshrArray = await orm.User.findAll({
+        where: {
+            [orm.Sequelize.Op.or]: [{jsdm: 5},{jsdm: {[orm.Sequelize.Op.like]:'5,%'}},{jsdm: {[orm.Sequelize.Op.like]:'%,5,%'}},{jsdm: {[orm.Sequelize.Op.like]:'%,5'}}]
+        }
+    });
+    let sqshr = sqshrArray.map(d => { return { value: d.INDEX, label: d.JSCY} });
+
+    let lrrArray = await orm.User.findAll({
+        where: {
+            [orm.Sequelize.Op.or]: [{jsdm: 6},{jsdm: {[orm.Sequelize.Op.like]:'6,%'}},{jsdm: {[orm.Sequelize.Op.like]:'%,6,%'}},{jsdm: {[orm.Sequelize.Op.like]:'%,6'}}]
+        }
+    });
+    let lrr = lrrArray.map(d => { return { value: d.INDEX, label: d.JSCY} });
+
+
+    return res.json({code:"0000",data:{xzqdm:dwdm,xzqmc:dwmc,cpdm:cpdm, xmjl:xmjl, csr:csr, fsr:fsr, sqshr:sqshr, lrr:lrr}})
 }));
 
 router.get('/systable/dwxx',  catchAsyncErrors(async (req, res) => {

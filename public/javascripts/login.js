@@ -68,7 +68,8 @@ $(function () {
               break;
 
             case '2':
-
+              window.location.href = 'admin.html';
+              
               break;
 
             default:
