@@ -1,5 +1,6 @@
 $(function () {
   var ADDRESS_LOGIN = '/api/login';
+  var ADDRESS_SEND_AUTHCODE = '/api/send_authcode';
 
   var ADDRESS_LOGOUT = '/api/logout';
 
@@ -29,6 +30,43 @@ $(function () {
         }
       }
     });
+
+    // $("#btn-getCaptcha").click(time);
+
+    // var wait = 60; //时间  
+    // var t; //计时器  
+    // function time() {
+    //   if (wait == 0) {
+    //     $('#btn-getCaptcha').removeAttr('disabled');
+    //     //btnObj.removeAttribute("disabled");  
+    //     //btnObj.textContent = "再次获取验证码";
+    //     $('#btn-getCaptcha').removeClass('layui-disabled');         
+    //     $('#btn-getCaptcha').text("获取验证码");
+    //     wait = 60;
+    //   } else {
+    //     //btnObj.setAttribute("disabled", true);
+    //     var reqData = {
+    //       phone:$("#input-captcha")
+    //     };
+    //     $.ajax({
+    //       url:ADDRESS_SEND_AUTHCODE,
+    //       type: 'POST',
+    //       data: reqData,
+    //       success: function (res) {
+
+    //       }
+    //     });
+    //     $('#btn-getCaptcha').attr('disabled', 'disabled');
+    //     $('#btn-getCaptcha').addClass('layui-disabled');
+    //     //$('#btn-getCaptcha').textContent = "重新发送验证码(" + wait + "s)";  
+    //     $('#btn-getCaptcha').text("重新发送验证码(" + wait + "s)");
+    //     wait--;
+    //     t = setTimeout(function () {
+    //       time();
+    //     }, 1000)
+    //   }
+    // }
+
 
 
     form.on('submit(*)', function (data) {
@@ -68,7 +106,12 @@ $(function () {
               break;
 
             case '2':
-              window.location.href = 'admin.html';
+              window.location.href = 'checkAdminPanel.html';
+              
+              break;
+            
+            case '3':
+              window.location.href = 'checkAdminPanel.html';
               
               break;
 

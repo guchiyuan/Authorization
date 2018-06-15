@@ -76,16 +76,25 @@ router.post('/login', catchAsyncErrors(async (req, res) => {
     //     throw new AppCommonError("验证码错误", "0002");
 
     let user = await orm.User.findOne({ where: { LXDH: req.body.phone } });
+    let role;
+   
     if (!user) {
         var token = jwt.encode(jwt.generatePayload(req.body.phone, "", "", ""));
         res.cookie('jwt', token, { httpOnly: true });
         return res.json({ role: "0" });
     }
     else {
-        let role = user.JSDM.indexOf("1") > -1 ? "2" : "1";
+        if (user.JSDM.indexOf("1") > -1) {
+          role = "2"
+        } else if(user.JSDM.indexOf("6") > -1){
+          role = "3"
+        } else {
+          role = "1"
+        }
+        // let role = user.JSDM.indexOf("1") > -1 ? "2" : "1";
         let token = jwt.encode(jwt.generatePayload(req.body.phone, user.JSDM, "", user.INDEX));
         res.cookie('jwt', token, { httpOnly: true });
-        return res.json({ role: role });
+        return res.json({ role: role,jscy: user.JSCY, jscy_index:user.INDEX });
     }
 }));
 
@@ -904,11 +913,26 @@ router.post('/checked_authority', catchAsyncErrors(async (req, res) => {
 
 //// 发送验证码
 router.post('/send_authcode', catchAsyncErrors(async (req, res) => {
+    // let payload = jwt.decode(req.cookies.jwt);
+    // if (!payload || !payload.phone)
+    //     throw new AppCommonError('登录信息无效', '0001');
+
+    // await authOper.getAuthCode(payload.phone);
+    await authOper.getAuthCode(req.body.phone);
+
+    // await authOper.sendMessage(payload.phone, '申请被拒绝1');
+    // await authOper.sendMessage(payload.phone, '申请被拒绝2');
+    // await authOper.sendMessage(payload.phone, '申请被拒绝3');
+    return res.json({ code: "0000", msg: "发送成功" });
+}));
+
+//// 发送验证码
+router.post('/send_message', catchAsyncErrors(async (req, res) => {
     let payload = jwt.decode(req.cookies.jwt);
     if (!payload || !payload.phone)
         throw new AppCommonError('登录信息无效', '0001');
 
-    // await authOper.sendMessage(payload.phone, '申请被拒绝1');
+    await authOper.sendMessage(payload.phone, '您已被拒绝，理由2');
     // await authOper.sendMessage(payload.phone, '申请被拒绝2');
     // await authOper.sendMessage(payload.phone, '申请被拒绝3');
     return res.json({ code: "0000", msg: "发送成功" });
@@ -1127,11 +1151,14 @@ router.post('/systable/cpxx', catchAsyncErrors(async (req, res) => {
             SFWH: reqParams.sfwh
         });
 
-        if (!newCplx) {
-            throw new AppCommonError("无法新增该产品类型", "0006");
-        } else {
-            return res.json({ code: "0000",msg:'产品类型新增成功' });
-        }
+   
+            if (!newCplx) {
+                throw new AppCommonError("无法新增该产品类型", "0006");
+            } else {
+                return res.json({ code: "0000",msg:'产品类型新增成功' });
+            }
+        
+     
 
     } else if (reqParams.xw === "0"){
         let cplx = await orm.option.CPLX.findOne({ where: { INDEX: reqParams.index } });

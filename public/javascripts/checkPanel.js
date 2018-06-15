@@ -30,6 +30,12 @@ $(function () {
 
     var currentRoleInfo = JSON.parse(window.sessionStorage.getItem('roleInfo'));
 
+
+    //管理员用户切换到管理系统的入口
+    $("#goToAdmin").click(function () {
+      window.location.href = './admin.html'
+    })
+
     //登录另外一个用户后，回到之前页面会重新刷新，显示之后登录的账号信息
     document.addEventListener('visibilitychange', function () { //浏览器切换事件
       roleInfo = JSON.parse(window.localStorage.getItem('roleInfo'));

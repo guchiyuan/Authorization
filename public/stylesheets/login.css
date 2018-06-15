@@ -28,6 +28,10 @@ body {
   float: left;
 }
 
+#btn-getCaptcha{
+  float: right;
+}
+
 #verify-container{
   width: 50%;
   float: left;

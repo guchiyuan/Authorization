@@ -23,9 +23,14 @@
         <input id="input-phone" type="text" name="" placeholder="手机号" autocomplete="off" class="layui-input" lay-verify="phone">
       </div>
 
-      <div class="layui-form-item">
+      <!-- <div class="layui-form-item">
         <input id="input-captcha" type="text" name="" placeholder="验证码" autocomplete="off" class="layui-input" lay-verify="pass">
         <div class="verify-img" id="verify-container"></div>
+      </div> -->
+
+      <div class="layui-form-item">
+        <input id="input-captcha" type="text" name="" placeholder="验证码" autocomplete="off" class="layui-input" lay-verify="required">
+        <button class="layui-btn" id="btn-getCaptcha">获取验证码</button>
       </div>
 
       <div class="layui-form-item">

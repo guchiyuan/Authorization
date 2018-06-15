@@ -2,8 +2,8 @@
 var MyAppError = require('../Error/CommonError');
 const SMSClient = require('@alicloud/sms-sdk')
 // ACCESS_KEY_ID/ACCESS_KEY_SECRET 根据实际申请的账号信息进行替换
-const accessKeyId = 'LTAIp3i5l3gwDiJd'
-const secretAccessKey = 'QrCy75spZegNhayFF4vsS7xMAfYOPA'
+const accessKeyId = 'LTAIcoPoD2ooW6dB'
+const secretAccessKey = 'gt8K7cHt6J7GDK4wZk1D5q92NGgCcj'
 //初始化sms_client
 let smsClient = new SMSClient({ accessKeyId, secretAccessKey })
 
@@ -47,8 +47,8 @@ module.exports = {
             funcGetAnthObj(phonecode, num);
             let status = await smsClient.sendSMS({
                 PhoneNumbers: phonecode,
-                SignName: '授权申请系统',
-                TemplateCode: 'SMS_135290284',
+                SignName: '国图调查软件',
+                TemplateCode: 'SMS_136871663',
                 TemplateParam: '{"code":"' + num + '"}'
             })
 
@@ -81,8 +81,8 @@ module.exports = {
         {
             let status = await smsClient.sendSMS({
                 PhoneNumbers: phonecode,
-                SignName: '授权申请系统',
-                TemplateCode: 'SMS_135795161',
+                SignName: '国图调查软件',
+                TemplateCode: 'SMS_136871662',
                 TemplateParam: '{"message":"' + message + '"}'
             })
 
