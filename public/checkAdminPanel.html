@@ -220,13 +220,16 @@
             <div class="layui-form-item" id="select-ssqy">
               <label class="layui-form-label" for="select-city">所属区域</label>
               <div class="layui-input-block layui-form" lay-filter="select-ssqy-filter">
-                <select id="select-province" class="select-ssqy" name="select-province" lay-verify="required" lay-filter="province-filter">
+                <!-- <select id="select-province" class="select-ssqy" name="select-province" lay-verify="required" lay-filter="province-filter">
                   <option value=""></option>
                 </select>
                 <select id="select-city" class="select-ssqy" name="select-city" lay-filter="city-filter">
                   <option value=""></option>
                 </select>
                 <select id="select-district" class="select-ssqy" name="select-district" lay-filter="district-filter">
+                  <option value=""></option>
+                </select> -->
+                <select lay-search id="select-ssqydm" class="select-ssqy" name="select-ssqydm" lay-verify="required" lay-filter="ssqydm-filter">
                   <option value=""></option>
                 </select>
               </div>
@@ -340,6 +343,12 @@
     <script id="select-tpl" type="text/x-tpl-handlebars">
       {{#option}}
       <option value="{{dm}}">{{mc}}</option>
+      {{/option}}
+    </script>
+
+    <script id="select-ssqy-tpl" type="text/x-tpl-handlebars">
+      {{#option}}
+      <option value="{{dm}}">{{mc}}{{dm}}</option>
       {{/option}}
     </script>
 

@@ -219,7 +219,7 @@
             <div class="layui-form-item" id="select-ssqy">
               <label class="layui-form-label" for="select-city">所属区域</label>
               <div class="layui-input-block layui-form" lay-filter="select-ssqy-filter">
-                <select id="select-province" class="select-ssqy" name="select-province" lay-verify="required" lay-filter="province-filter">
+                <!-- <select id="select-province" class="select-ssqy" name="select-province" lay-verify="required" lay-filter="province-filter">
                   <option value=""></option>
                 </select>
                 <select id="select-city" class="select-ssqy" name="select-city" lay-filter="city-filter">
@@ -227,17 +227,20 @@
                 </select>
                 <select id="select-district" class="select-ssqy" name="select-district" lay-filter="district-filter">
                   <option value=""></option>
+                </select> -->
+                <select lay-search id="select-ssqydm" class="select-ssqy" name="select-ssqydm" lay-verify="required" lay-filter="ssqydm-filter">
+                  <option value=""></option>
                 </select>
               </div>
             </div>
 
-            <div class="layui-form-item" style="display: none" id="show-ssqy">
+            <!-- <div class="layui-form-item" style="display: none" id="show-ssqy">
               <label class="layui-form-label" for="">所属区域</label>
               <div class="layui-input-block">
                 <input id="input-ssqy" type="text" name="input-ssqy" required lay-verify="" placeholder=" 请选择所属区域" autocomplete="off" class="layui-input"
                   lay-filter="ssqy-filter">
               </div>
-            </div>
+            </div> -->
 
             <div class="layui-form-item">
               <label class="layui-form-label" for="input-lxdh">手机号</label>
@@ -339,6 +342,12 @@
     <script id="select-tpl" type="text/x-tpl-handlebars">
       {{#option}}
       <option value="{{dm}}">{{mc}}</option>
+      {{/option}}
+    </script>
+
+    <script id="select-ssqy-tpl" type="text/x-tpl-handlebars">
+      {{#option}}
+      <option value="{{dm}}">{{mc}}{{dm}}</option>
       {{/option}}
     </script>
 

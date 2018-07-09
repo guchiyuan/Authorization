@@ -94,7 +94,7 @@ $(function () {
       details.blzt = '二审通过';
       break;
     case '5':
-      details.blzt = '三审通过';
+      details.blzt = '审核通过';
       break;
     case '6':
       details.blzt = '在线授权失败';
@@ -145,6 +145,7 @@ $(function () {
       }, function () {
         var reqDataCheckedAuthority = {
           'index': details.index,
+          'lxdh': details.lxdh,
           'sftg': '1',
           'shyj': '申请属实，予以通过'
         };
@@ -203,6 +204,7 @@ $(function () {
           }
           var reqDataCheckedAuthority = {
             "index": details.index,
+            'lxdh': details.lxdh,            
             "sftg": "0",
             "shyj": shyj
           };

@@ -11,7 +11,8 @@ $(function () {
     var laydate = layui.laydate;
 
     laydate.render({
-      elem: '#input-jzsj' //指定元素
+      elem: '#input-jzsj', //指定元素
+      format: 'yyyy-MM-dd'
     });
 
     form.verify({
@@ -40,19 +41,32 @@ $(function () {
         $('#div-swhtmc').show();
         $('#div-swlxr').show();
         //内部用户才可以自定义截止时间
-        $('input[title="自定义截止时间"]').next().remove();
-        $('input[title="自定义截止时间"]').remove();
-        $('#input-jzsj').parent().hide();
+        // $('input[title="自定义截止时间"]').next().remove();
+        // $('input[title="自定义截止时间"]').remove();
+        // $('#input-jzsj').parent().hide();
         break;
       case '1':
         $('#div-jfsy').show();
-        $('#div-swhtmc').remove();
-        $('#div-swlxr').remove();
+        $('#div-swhtmc').hide();
+        $('#div-swlxr').hide();
         break;
 
       default:
         break;
     }
+
+    form.on('radio(filter-jfsy)', function(data){
+      console.log(data.value); //被点击的radio的value值
+      if (data.value === "1") {
+        $('#div-swhtmc').show();
+        $('#div-swlxr').show();
+      } else {
+        $('#input-swhtmc').val('');
+        $('#input-swlxr').val('');
+        $('#div-swhtmc').hide();
+        $('#div-swlxr').hide();
+      }
+    });  
 
 
     //----------------满足单机授权和服务器授权的不同条件-----------------------------//
@@ -110,7 +124,7 @@ $(function () {
       url: ADDRESS_RJCPLX,
       async: false,
       success: function (data) {
-        console.log('cpdm success');
+        console.log(data);
         loadSelectOptions($('#select-cpdm'), data)
         form.render('select');
       },
@@ -143,7 +157,7 @@ $(function () {
       success: function (res) {
         provinceData = res;
         loadSelectOptionsXzqdm($('#select-xzqdmProvince'), provinceData);
-        form.render();
+        form.render(null,'xzqdm-filter');
 
         $('.multiSelect').append('<input placeholder="请选择" style="line-height:2;background-color:#fff;border:none" disabled>');
         // if (sfnb === '0') {
@@ -181,7 +195,9 @@ $(function () {
           success: function (res) {
             cityData = res;
             loadSelectOptionsXzqdm($('#select-xzqdmCity'), cityData);
-            form.render();
+            // form.render();
+            form.render(null,'xzqdm-filter');
+            
             $('#select-xzqdmDistrict').next().hide();
             // if (sfnb === '0') {
             //   $('input[title="自定义截止时间"]').next().hide();
@@ -222,7 +238,8 @@ $(function () {
           success: function (res) {
             districtData = res;
             loadSelectOptionsXzqdm($('#select-xzqdmDistrict'), districtData);
-            form.render();
+            // form.render();
+            form.render(null,'xzqdm-filter');
             // if (sfnb === '0') {
             //   $('input[title="自定义截止时间"]').next().hide();
             // }
@@ -300,13 +317,22 @@ $(function () {
     });
 
 
+    
+    // form.on('select(cpdm-filter)',function(data){
+    //     console.log(data.value);
+    //     console.log( $('#select-cpdm').siblings('.layui-form-select').find('dd.layui-this').text() );
+
+    // });
 
     form.on('submit(formApplication)', function (data) {
+      // console.log(sqxlmsArray);
       var amountSqxlm = $('#input-sqxlm').val().split(',').length;
       console.log(amountSqxlm);
 
       if ($('#input-sqsl').val() !== amountSqxlm.toString()) {
         layer.msg('申请数量与授权序列码个数不一致，请修改！')
+      } else if(amountSqxlm > 10){
+        layer.msg('申请数量不得超过10个，请修改！')        
       } else {
         var reqDataApplication = {
           swhtmc: $('#input-swhtmc').val(),
@@ -318,8 +344,11 @@ $(function () {
           //xzqdm: '320101',
           sqsl: $('#input-sqsl').val(),
           // jzsj: new Date($('#input-jzsj').val()), //Date.parse(new Date($('#jzsj').val())),
-          sqxlm: $('#input-sqxlm').val(),
-          jfsy: $('input[name="jfsy"]:checked').val()
+          // sqxlm: $('#input-sqxlm').val(),
+          sqxlm: sqxlmsArray.join(','),
+          jfsy: $('input[name="jfsy"]:checked').val(),
+
+          cpmc: $('#select-cpdm').siblings('.layui-form-select').find('dd.layui-this').text()
         };
 
         //测试默认320101
@@ -341,7 +370,6 @@ $(function () {
         }
 
         console.log(reqDataApplication);
-
 
         $.ajax({
           url: ADDRESS_APPLY,
@@ -373,6 +401,7 @@ $(function () {
 
 })
 
+var sqxlmsArray = [];
 
 function selectSeries(file) {
 
@@ -396,6 +425,8 @@ function selectSeries(file) {
         var series = evt.target.result;
         var seriesStr = series + ',' + $('#input-sqxlm').val();
         $('#input-sqxlm').val(seriesStr.substr(0, seriesStr.length - 1));
+
+        sqxlmsArray.push(series);
       }
     }
   }

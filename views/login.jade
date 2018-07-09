@@ -15,9 +15,14 @@ html(lang='en')
       form#form-login.layui-form
         .layui-form-item
           input#input-phone.layui-input(type='text', name='', placeholder='手机号', autocomplete='off', lay-verify='phone')
+        //
+          <div class="layui-form-item">
+          <input id="input-captcha" type="text" name="" placeholder="验证码" autocomplete="off" class="layui-input" lay-verify="pass">
+          <div class="verify-img" id="verify-container"></div>
+          </div>
         .layui-form-item
-          input#input-captcha.layui-input(type='text', name='', placeholder='验证码', autocomplete='off', lay-verify='pass')
-          #verify-container.verify-img
+          input#input-captcha.layui-input(type='text', name='', placeholder='验证码', autocomplete='off', lay-verify='required')
+          button#btn-getCaptcha.layui-btn(type='button') 获取验证码
         .layui-form-item
           button#btn-login.layui-btn(lay-submit='', lay-filter='*') 登录
           button.layui-btn(type='reset') 重置

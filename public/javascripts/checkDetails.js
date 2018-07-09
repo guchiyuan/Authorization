@@ -99,7 +99,7 @@ function renderToTpl() {
       details.blzt = '二审通过';
       break;
     case '5':
-      details.blzt = '三审通过';
+      details.blzt = '审核通过';
       break;
     case '6':
       details.blzt = '在线授权失败';

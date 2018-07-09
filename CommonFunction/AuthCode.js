@@ -28,21 +28,24 @@ function ClearDirty() {
 
 var funcGetAnthObj = (phone, code) => {
     let objAuth = authCodeArray.find((item) => item.phone == phone);
-    if (!objAuth)
+    if (!objAuth){
         objAuth = new Object();
-
-    objAuth.phone = phone;
-    objAuth.code = code;
-    objAuth.endtime = Date.now() + 5 * 60 * 1000;       // 验证码5分钟后过期
-    authCodeArray.push(objAuth);
+        objAuth.phone = phone;
+        objAuth.code = code;
+        objAuth.endtime = Date.now() + 5 * 60 * 1000;       // 验证码5分钟后过期
+        authCodeArray.push(objAuth);
+    } else {
+        objAuth.code = code;
+    }
 }
 
 module.exports = {
     getAuthCode: async (phonecode) => {
-        if (!phonecode)
+        if (!phonecode){
             throw new MyAppError('手机号为空', '0001');
+        }
 
-        try {
+        // try {
             var num = Math.floor(Math.random() * 1000000);
             funcGetAnthObj(phonecode, num);
             let status = await smsClient.sendSMS({
@@ -57,14 +60,14 @@ module.exports = {
 
             if (status.Code != 'OK')
                 throw new MyAppError('发送短信验证码失败', '0002')
-        }
-        catch (error) {
-            console.log(error.message);
-            throw new MyAppError('发送短信验证码失败', '0002')
-        }
+        // }
+        // catch (error) {
+        //     console.log(error.message);
+        //     throw new MyAppError('发送短信验证码失败', '0002')
+        // }
     },
     valideAuthCode: async (phonecode, authcode) => {
-        let objAuth = authCodeArray.find((item) => item.phone == phonecode);
+        let objAuth = authCodeArray.find((item) => item.phone === phonecode);
         if (!objAuth)
             throw new MyAppError('验证码错误', '0002');
 
@@ -77,20 +80,29 @@ module.exports = {
         return true;
     },
     sendMessage: async (phonecode, message) => {
-        try
-        {
+        // try
+        // {
             let status = await smsClient.sendSMS({
                 PhoneNumbers: phonecode,
                 SignName: '国图调查软件',
                 TemplateCode: 'SMS_136871662',
                 TemplateParam: '{"message":"' + message + '"}'
+            }).then(function (res) {
+                let {Code}=res
+                if (Code === 'OK') {
+                    //处理返回参数
+                    console.log(res)
+                }
+            }, function (err) {
+                console.log(err)
+                
             })
 
-            console.log(status.RequestId);
-        }
-        catch(err)
-        {
-
-        }
+            // console.log(status.RequestId);
+        // }
+        // catch(err)
+        // {
+        //     console.log(err);
+        // }
     }
 }

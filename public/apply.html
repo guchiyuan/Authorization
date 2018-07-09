@@ -14,13 +14,20 @@
 </head>
 
 <style>
-  
 </style>
 
 <body>
   <div class="layui-fluid">
 
     <form class="layui-form" action="">
+
+      <div id="div-jfsy" class="layui-form-item" style="display: none">
+        <label class="layui-form-label" for="input-jfsy">甲方使用</label>
+        <div class="layui-input-block">
+          <input type="radio" name="jfsy" value="1" title="是" lay-filter="filter-jfsy">
+          <input type="radio" name="jfsy" value="0" title="否" checked lay-filter="filter-jfsy">
+        </div>
+      </div>
 
       <div class="layui-form-item" style="display: none" id="div-swhtmc">
         <label class="layui-form-label" for="input-swhtmc">商务合同</label>
@@ -35,14 +42,6 @@
         <div class="layui-input-block">
           <input id="input-swlxr" type="text" name="input-swlxr" required lay-verify="required" placeholder="请输入联系人" autocomplete="off"
             class="layui-input">
-        </div>
-      </div>
-
-      <div id="div-jfsy" class="layui-form-item" style="display: none">
-        <label class="layui-form-label" for="input-jfsy">甲方使用</label>
-        <div class="layui-input-block">
-          <input type="radio" name="jfsy" value="1" title="是">
-          <input type="radio" name="jfsy" value="0" title="否" checked>
         </div>
       </div>
 
@@ -65,6 +64,7 @@
         </div>
       </div>
 
+
       <div class="layui-form-item">
         <label class="layui-form-label" for="select-cpdm">软件产品</label>
         <div class="layui-input-block">
@@ -77,18 +77,9 @@
         </div>
       </div>
 
-      <div class="layui-form-item" id="div-jmg">
-        <label class="layui-form-label" for="jmg">使用加密狗</label>
-        <div class="layui-input-block">
-          <input type="radio" name="jmg" value="1" title="是">
-          <input type="radio" name="jmg" value="0" title="否" checked>
-        </div>
-      </div>
-
-
       <div class="layui-form-item">
         <label class="layui-form-label" for="">行政区代码</label>
-        <div class="layui-input-block" lay-filter="xzqdm-filter">
+        <div class="layui-form layui-input-block" lay-filter="xzqdm-filter">
           <select id="select-xzqdmProvince" name="select-xzqdmProvince" lay-verify="required" multiple="multiple" lay-filter="xzqdmProvince-filter">
             <option value=""></option>
           </select>
@@ -101,11 +92,19 @@
         </div>
       </div>
 
+      <div class="layui-form-item" id="div-jmg">
+        <label class="layui-form-label" for="jmg">使用加密狗</label>
+        <div class="layui-input-block">
+          <input type="radio" name="jmg" value="1" title="是">
+          <input type="radio" name="jmg" value="0" title="否" checked>
+        </div>
+      </div>
+
       <div class="layui-form-item">
         <label class="layui-form-label" for="input-sqsl">申请数量</label>
         <div class="layui-input-block">
           <input id="input-sqsl" type="number" name="input-sqsl" required lay-verify="required|isNumber" placeholder="请输入申请数量" autocomplete="off"
-            class="layui-input" min="1">
+            class="layui-input" min="1" max="10">
         </div>
       </div>
 
@@ -125,8 +124,8 @@
       <div class="layui-form-item">
         <label class="layui-form-label" for="input-sqxlm">授权序列码</label>
         <div class="layui-input-block">
-          <input id="input-sqxlm" type="text" name="input-sqxlm" required lay-verify="required" placeholder="请选择授权码文件" autocomplete="off"
-            class="layui-input layui-disabled" disabled>
+          <input id="input-sqxlm" type="text" name="input-sqxlm" required lay-verify="required" placeholder="请选择授权码文件" maxlength="1000"
+            autocomplete="off" class="layui-input layui-disabled" disabled>
           <input class="layui-btn" id="input-file" type='file' name='myfile' onchange="selectSeries(this)" multiple="multiple" accept=".dat">
           <button class="layui-btn" id="btn-delete" type="button">删除</button>
         </div>

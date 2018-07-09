@@ -8,6 +8,7 @@ module.exports = function (sequlize, dataTypes) {
         , WECHAT: { type: dataTypes.STRING }
         , BZ: { type: dataTypes.STRING }
         , PWD: { type: dataTypes.STRING }
+        , LRR: { type: dataTypes.STRING }
         , INDEX: { type: dataTypes.STRING, primaryKey: true, field: "JSCY_INDEX" }
     }, {
             freezeTableName: true,

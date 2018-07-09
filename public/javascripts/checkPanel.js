@@ -1,7 +1,8 @@
 $(function () {
   var ADDRESS_XMZXX = '/api/get_option/xmzxx';
   // var ADDRESS_RJCPLX = '/api/get_option/rjcplx';
-  var ADDRESS_XZQDM = '/api/get_option/xzqdm';
+  // var ADDRESS_XZQDM = '/api/get_option/xzqdm';
+  var ADDRESS_XZQDM = '/api/get_ssqy';
 
   var ADDRESS_LOGOUT = '/api/logout';
 
@@ -122,7 +123,7 @@ $(function () {
     // }
 
 
-    if (roleInfo.role === '0') {
+    if (roleInfo.role === '0' || roleInfo.role === '2') {
       $('#content-init').hide();
       $('#content-apply').show();
       $('#btn-checkUsers').hide();
@@ -247,69 +248,81 @@ $(function () {
         url: ADDRESS_XZQDM,
         async: false,
         success: function (dataXzqdm) {
-          console.log('get xzqdm success');
-          $.each(dataXzqdm, function (idx, obj) {
-            if (obj.dm.slice(-4) === '0000') {
-              provinceData.push(obj);
-              loadSelectOptions($('#select-province'), provinceData);
-              // $('#select-province').prepend('<option value="">请选择省份</option>');
-              form.render('select', 'select-ssqy-filter');
-
-            } else if (obj.dm.slice(-2) === '00') {
-              cityData.push(obj);
-            } else {
-              districtData.push(obj);
-            }
-          });
-
-        },
-        error: function (err) {
-          console.log(err);
+          loadSelectOptions($('#select-ssqydm'), dataXzqdm);
         }
       });
     }
 
-    $('#select-city').next().hide();
-    $('#select-district').next().hide();
+    // function loadXzqdmSelect() {
+    //   $.ajax({
+    //     url: ADDRESS_XZQDM,
+    //     async: false,
+    //     success: function (dataXzqdm) {
+    //       console.log(dataXzqdm);
+          
+    //       console.log('get xzqdm success');
+    //       $.each(dataXzqdm, function (idx, obj) {
+    //         if (obj.dm.slice(-4) === '0000') {
+    //           provinceData.push(obj);
+    //           loadSelectOptions($('#select-province'), provinceData);
+    //           // $('#select-province').prepend('<option value="">请选择省份</option>');
+    //           form.render('select', 'select-ssqy-filter');
 
-    form.on('select(province-filter)', function (data) {
-      var showCityData = [];
-      // $('#select-city').empty();
-      // $('#select-city').append('<option value=""></option>');
-      $.each(cityData, function (idx, obj) {
-        if (obj.dm.substr(0, 2) === $('#select-province').val().substr(0, 2)) {
-          showCityData.push(obj);
-        }
-      });
-      loadSelectOptions($('#select-city'), showCityData);
-      form.render('select', 'select-ssqy-filter');
+    //         } else if (obj.dm.slice(-2) === '00') {
+    //           cityData.push(obj);
+    //         } else {
+    //           districtData.push(obj);
+    //         }
+    //       });
 
-      // $('#select-city').prepend('<option value="">请选择城市</option>');      
-      // form.render('select', 'city-filter');
-      $('#select-district').next().hide();
-      if ($('#select-province').val() === '') {
-        $('#select-city').next().hide();
-      }
-    });
+    //     },
+    //     error: function (err) {
+    //       console.log(err);
+    //     }
+    //   });
+    // }
 
-    form.on('select(city-filter)', function (data) {
-      var showDistrictData = [];
-      // $('#select-district').empty();
-      // $('#select-district').append('<option value=""></option>');
-      $.each(districtData, function (idx, obj) {
-        if (obj.dm.substr(0, 4) === $('#select-city').val().substr(0, 4)) {
-          showDistrictData.push(obj);
-        }
-      });
-      loadSelectOptions($('#select-district'), showDistrictData);
-      form.render('select', 'select-ssqy-filter');
-      // $('#select-district').prepend('<option value="">请选择区县</option>');      
-      if ($('#select-city').val() === '') {
-        $('#select-district').next().hide();
-      }
-      // form.render('select', 'district-filter');
-    });
-    //----------------------------------------------------------------------------------//
+    // $('#select-city').next().hide();
+    // $('#select-district').next().hide();
+
+    // form.on('select(province-filter)', function (data) {
+    //   var showCityData = [];
+    //   // $('#select-city').empty();
+    //   // $('#select-city').append('<option value=""></option>');
+    //   $.each(cityData, function (idx, obj) {
+    //     if (obj.dm.substr(0, 2) === $('#select-province').val().substr(0, 2)) {
+    //       showCityData.push(obj);
+    //     }
+    //   });
+    //   loadSelectOptions($('#select-city'), showCityData);
+    //   form.render('select', 'select-ssqy-filter');
+
+    //   // $('#select-city').prepend('<option value="">请选择城市</option>');      
+    //   // form.render('select', 'city-filter');
+    //   $('#select-district').next().hide();
+    //   if ($('#select-province').val() === '') {
+    //     $('#select-city').next().hide();
+    //   }
+    // });
+
+    // form.on('select(city-filter)', function (data) {
+    //   var showDistrictData = [];
+    //   // $('#select-district').empty();
+    //   // $('#select-district').append('<option value=""></option>');
+    //   $.each(districtData, function (idx, obj) {
+    //     if (obj.dm.substr(0, 4) === $('#select-city').val().substr(0, 4)) {
+    //       showDistrictData.push(obj);
+    //     }
+    //   });
+    //   loadSelectOptions($('#select-district'), showDistrictData);
+    //   form.render('select', 'select-ssqy-filter');
+    //   // $('#select-district').prepend('<option value="">请选择区县</option>');      
+    //   if ($('#select-city').val() === '') {
+    //     $('#select-district').next().hide();
+    //   }
+    //   // form.render('select', 'district-filter');
+    // });
+    // //----------------------------------------------------------------------------------//
 
 
     //--------------------------获取用户信息并显示---------------------------------------------//
@@ -343,8 +356,8 @@ $(function () {
           $('#welcomeUser').text('欢迎您，' + userInfo.sqr);
 
           $(document).click(function () {
-            $('#show-ssqy').show();
-            $('#select-ssqy').hide();
+            // $('#show-ssqy').show();
+            // $('#select-ssqy').hide();
 
             var selectedSsqy = $('#input-ssqy').val();
 
@@ -426,24 +439,32 @@ $(function () {
             $('#div-zt').show();
           }
 
-          $('#select-ssqy').hide();
-          $('#show-ssqy').show();
-          $('#input-ssqy').val(userInfo.ssqy);
-
-          $('#input-ssqy').focus(function () {
-            $('#show-ssqy').hide();
-            $('#select-ssqy').show();
-            if ($('#select-city').val() === '') {
-              $('#select-city').next().hide();
-              $('#select-district').next().hide();
+          //ssqy根据sqdj里面的xmddm来 2018/06/25
+          $("#select-ssqydm option").each(function () {         
+            if ($(this).val() === userInfo.ssqy) {
+              $(this).attr('selected', true);
+              form.render('select', 'select-ssqy-filter');
             }
+          });
 
-            if ($('#select-district').val() === '') {
-              $('#select-district').next().hide();
-            }
-            // $('#select-city').next().hide();
-            // $('#select-district').next().hide();
-          })
+          // $('#select-ssqy').hide();
+          // $('#show-ssqy').show();
+          // $('#input-ssqy').val(userInfo.ssqy);
+
+          // $('#input-ssqy').focus(function () {
+          //   $('#show-ssqy').hide();
+          //   $('#select-ssqy').show();
+          //   if ($('#select-city').val() === '') {
+          //     $('#select-city').next().hide();
+          //     $('#select-district').next().hide();
+          //   }
+
+          //   if ($('#select-district').val() === '') {
+          //     $('#select-district').next().hide();
+          //   }
+          //   // $('#select-city').next().hide();
+          //   // $('#select-district').next().hide();
+          // })
 
           if ($('#input-ssqy').val() !== '') {
             $('#select-province').attr({
@@ -538,9 +559,12 @@ $(function () {
         "sqrlx": $('#select-sqrlx').val(),
         "wechat": $('#input-wechat').val(),
         "jsyx": $('#input-jsyx').val(),
-        "ssqy": $('#input-ssqy').val(),
+        "ssqy": $('#select-ssqydm').val(),
         "lxdh": $('#input-lxdh').val()
       };
+
+      console.log(reqDataUserInfo);
+      
 
       if (sqrlx === '甲方用户') {
         sqrlx = '0';
@@ -572,8 +596,8 @@ $(function () {
         layer.alert('更改了重要信息，您的账号需要进行重新认证！', {
           title: '更改信息'
         }, function () {
-          $('#show-ssqy').show();
-          $('#select-ssqy').hide();
+          // $('#show-ssqy').show();
+          // $('#select-ssqy').hide();
           $('#btn-addApplication').hide();
           $('#welcomeUser').text('欢迎您，' + reqDataUserInfo.sqr);
           submitUserInfo();
@@ -597,9 +621,9 @@ $(function () {
                 time: 1000
               });
               $('#btn-submitUserInfo').text('更新信息');
-              $('#select-ssqy').hide();
-              $('#show-ssqy').show();
-              $('#input-ssqy').val(reqDataUserInfo.ssqy);
+              // $('#select-ssqy').hide();
+              // $('#show-ssqy').show();
+              // $('#input-ssqy').val(reqDataUserInfo.ssqy);
 
               $('.uneditable').addClass('layui-disabled');
               $('.uneditable').attr({
@@ -902,12 +926,14 @@ $(function () {
         "page": "1",
         "pageSize": "1000"
       };
+      var indexLoading = layer.load(1);
 
       $.ajax({
         url: ADDRESS_USERHISTORY,
         type: 'GET',
         data: reqDataHistoryInfo,
         success: function (res) {
+          layer.close(indexLoading);
           console.log(res);
           if (res.code === undefined) {
             $('#applyHistoryTable').bootstrapTable('load', res);
@@ -1027,6 +1053,7 @@ $(function () {
     //------加载select选项的函数，利用handlebars进行渲染----------------------//
     function loadSelectOptions($selector, data) {
       var options = [];
+      var tpl;
       $.each(data, function (idx, obj) {
         options.push({
           mc: obj.mc,
@@ -1034,7 +1061,14 @@ $(function () {
         });
       });
 
-      var tpl = $("#select-tpl").html();
+      //如果为所属区域，option的label里外加代码
+      if (data[0].dm.length === 6) {
+        tpl = $("#select-ssqy-tpl").html();        
+      } else {
+        tpl = $("#select-tpl").html();
+      }
+      
+
       var rendered = RenderData(tpl, {
         option: options
       });
@@ -1190,6 +1224,7 @@ $(function () {
           title: '操作',
           align: 'center',
           formatter: function (value, row, index) {
+            // ' + '\'' + row.index + '\'' + ',' + '\'' + row.lxdh + '\''+ ',' + '\'' + row.rzzt + '\'' + '
             var allow = '<button class="layui-btn layui-btn-xs btn-allow" onclick="allowUsers(\'' + row.index + '\')">通过认证</button>';
             var refuse = '<button class="layui-btn layui-btn-xs layui-btn-danger btn-refuse" onclick="refuseUsers(\'' + row.index + '\')">拒绝认证</button>';
             return allow + refuse;
@@ -1206,11 +1241,14 @@ $(function () {
       //   columns: columnsUncheckedUsers
       // });
 
+      var indexLoading = layer.load(1);      
+
       $.ajax({
         url: ADDRESS_UNCHECKEDUSERS,
         type: 'GET',
         // async:false,
         success: function (res, code) {
+          layer.close(indexLoading);
           console.log(res);
           if (res.msg && !res.code) {
             layer.msg(res.msg, {
@@ -1270,6 +1308,8 @@ $(function () {
           "sftg": "1",
           "shyj": ""
         };
+        console.log(reqDataCheckUsers);
+        
         $.ajax({
           url: ADDRESS_CHECKEDUSERS,
           type: 'POST',
@@ -1331,7 +1371,7 @@ $(function () {
           }
 
           var reqDataCheckUsers = {
-            "index": index,
+            "index": index,                 
             "sftg": "0",
             "shyj": shyj
           };
@@ -1478,7 +1518,7 @@ $(function () {
                 return '二审通过'
                 break;
               case '5':
-                return '三审通过'
+                return '审核通过'
                 break;
               case '6':
                 return '在线授权失败'
@@ -1519,11 +1559,14 @@ $(function () {
       //   columns: columnsUncheckedApplications
       // });
 
+      var indexLoading = layer.load(1);
+
       $.ajax({
         url: ADDRESS_UNCHECKEDAPPLICATIONS,
         type: 'GET',
         // async:false,
         success: function (res) {
+          layer.close(indexLoading);
           console.log(res);
           if (res.msg && !res.code) {
             layer.msg(res.msg, {
@@ -1574,6 +1617,9 @@ $(function () {
           "sftg": "1",
           "shyj": ""
         };
+
+        console.log(reqDataCheckApplications);
+        
         $.ajax({
           url: ADDRESS_CHECKEDAPPLICATIONS,
           type: 'POST',
@@ -1631,7 +1677,7 @@ $(function () {
             shyj = commonShyj + ',' + otherShyj;
           }
           var reqDataCheckApplications = {
-            "index": index,
+            "index": index,           
             "sftg": "0",
             "shyj": shyj
           };
@@ -1798,7 +1844,7 @@ $(function () {
                 return '二审通过'
                 break;
               case '5':
-                return '三审通过'
+                return '审核通过'
                 break;
               case '6':
                 return '在线授权失败'
@@ -1823,8 +1869,8 @@ $(function () {
           align: 'center',
           visible: false,
           formatter: function (value, row, index) {
-            var allow = '<button class="layui-btn layui-btn-xs btn-allow" onclick="allowCreate(\'' + row.index + '\')">制作完成</button>';
-            var refuse = '<button class="layui-btn layui-btn-xs layui-btn-danger btn-refuse" onclick="refuseCreate(\'' + row.index + '\')">不予办理</button>';
+            var allow = '<button class="layui-btn layui-btn-xs btn-allow" onclick="allowCreate(' + '\'' + row.index + '\'' + ',' + '\'' + row.lxdh + '\''+ ')">制作完成</button>';
+            var refuse = '<button class="layui-btn layui-btn-xs layui-btn-danger btn-refuse" onclick="refuseCreate(' + '\'' + row.index + '\'' + ',' + '\'' + row.lxdh + '\''+ ')">不予办理</button>';
             return allow + refuse;
           }
         }
@@ -1839,12 +1885,15 @@ $(function () {
       //   columns: columnsNeedAuthority
       // });
 
+      var indexLoading = layer.load(1);
+      
 
       $.ajax({
         url: ADDRESS_NEEDAUTHORITY,
         type: 'GET',
         // async:false,
         success: function (res) {
+          layer.close(indexLoading);
           console.log(res);
           if (res.msg && !res.code) {
             layer.msg(res.msg, {
@@ -1907,12 +1956,13 @@ $(function () {
       });
     });
 
-    allowCreate = function (index) {
+    allowCreate = function (index,lxdh) {
       layer.alert('确认已经完成授权制作并发送', {
         title: '通过认证'
       }, function () {
         var reqDataCheckedAuthority = {
           'index': index,
+          'lxdh': lxdh,
           'sftg': '1',
           'shyj': '申请属实，予以通过'
         };
@@ -1935,7 +1985,7 @@ $(function () {
     };
 
 
-    refuseCreate = function (index) {
+    refuseCreate = function (index,lxdh) {
       $.ajax({
         url: ADDRESS_APPLICATIONREJECTREASON,
         type: 'GET',
@@ -1969,6 +2019,7 @@ $(function () {
           }
           var reqDataCheckedAuthority = {
             "index": index,
+            'lxdh': lxdh,            
             "sftg": "0",
             "shyj": shyj
           };
