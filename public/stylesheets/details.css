@@ -39,14 +39,13 @@ body {
 }
 
 
-
 .content:hover {
   background-color: #fff;
   box-shadow: 0px 5px 10px 1px #e2e2e2;
 }
 
-.label {
-  font-weight: bold;
+.layui-col-xs12 .label {
+  width: 15.63%
 }
 
 .btn-group {

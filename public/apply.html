@@ -30,7 +30,7 @@
       </div>
 
       <div class="layui-form-item" style="display: none" id="div-swhtmc">
-        <label class="layui-form-label" for="input-swhtmc">商务合同</label>
+        <label class="layui-form-label" for="input-swhtmc"><span class="required-mark">* </span>商务合同</label>
         <div class="layui-input-block">
           <input id="input-swhtmc" type="text" name="input-swhtmc" required lay-verify="required" placeholder="请输入合同名称" autocomplete="off"
             class="layui-input">
@@ -38,7 +38,7 @@
       </div>
 
       <div class="layui-form-item" style="display: none" id="div-swlxr">
-        <label class="layui-form-label" for="input-swlxr">商务联系人</label>
+        <label class="layui-form-label" for="input-swlxr"><span class="required-mark">* </span>商务联系人</label>
         <div class="layui-input-block">
           <input id="input-swlxr" type="text" name="input-swlxr" required lay-verify="required" placeholder="请输入联系人" autocomplete="off"
             class="layui-input">
@@ -46,7 +46,7 @@
       </div>
 
       <div class="layui-form-item">
-        <label class="layui-form-label" for="select-sqlx">授权类型</label>
+        <label class="layui-form-label" for="select-sqlx"><span class="required-mark">* </span>授权类型</label>
         <div class="layui-input-block">
           <select id="select-sqlx" name="select-sqlx" lay-verify="required" lay-filter="sqlx-filter">
             <option value="">请选择</option>
@@ -57,7 +57,7 @@
       </div>
 
       <div id="div-sqxks" class="layui-form-item" style="display: none">
-        <label class="layui-form-label" for="input-sqxks">授权许可数</label>
+        <label class="layui-form-label" for="input-sqxks"><span class="required-mark">* </span>授权许可数</label>
         <div class="layui-input-block">
           <input id="input-sqxks" type="number" name="input-sqxks" required lay-verify="required|over1" placeholder="请输入申请数量（客户端允许连接的最大数量）"
             autocomplete="off" class="layui-input" min="2">
@@ -66,7 +66,7 @@
 
 
       <div class="layui-form-item">
-        <label class="layui-form-label" for="select-cpdm">软件产品</label>
+        <label class="layui-form-label" for="select-cpdm"><span class="required-mark">* </span>软件产品</label>
         <div class="layui-input-block">
           <select id="select-cpdm" name="select-cpdm" lay-verify="required" lay-filter="cpdm-filter">
             <option value="">请选择</option>
@@ -78,9 +78,9 @@
       </div>
 
       <div class="layui-form-item">
-        <label class="layui-form-label" for="">行政区代码</label>
+        <label class="layui-form-label" for=""><span class="required-mark">* </span>行政区代码</label>
         <div class="layui-form layui-input-block" lay-filter="xzqdm-filter">
-          <select id="select-xzqdmProvince" name="select-xzqdmProvince" lay-verify="required" multiple="multiple" lay-filter="xzqdmProvince-filter">
+          <select id="select-xzqdmProvince" name="select-xzqdmProvince" lay-verify="required" lay-filter="xzqdmProvince-filter">
             <option value=""></option>
           </select>
           <select id="select-xzqdmCity" name="select-xzqdmCity" lay-verify="" multiple lay-filter="xzqdmCity-filter">
@@ -101,7 +101,7 @@
       </div>
 
       <div class="layui-form-item">
-        <label class="layui-form-label" for="input-sqsl">申请数量</label>
+        <label class="layui-form-label" for="input-sqsl"><span class="required-mark">* </span>申请数量</label>
         <div class="layui-input-block">
           <input id="input-sqsl" type="number" name="input-sqsl" required lay-verify="required|isNumber" placeholder="请输入申请数量" autocomplete="off"
             class="layui-input" min="1" max="10">
@@ -122,11 +122,11 @@
       </div>
 
       <div class="layui-form-item">
-        <label class="layui-form-label" for="input-sqxlm">授权序列码</label>
+        <label class="layui-form-label" for="input-sqxlm"><span class="required-mark">* </span>授权序列码</label>
         <div class="layui-input-block">
-          <input id="input-sqxlm" type="text" name="input-sqxlm" required lay-verify="required" placeholder="请选择授权码文件" maxlength="1000"
+          <input id="input-sqxlm" type="text" name="input-sqxlm" lay-verify="" placeholder="请选择授权码文件" maxlength="1000"
             autocomplete="off" class="layui-input layui-disabled" disabled>
-          <input class="layui-btn" id="input-file" type='file' name='myfile' onchange="selectSeries(this)" multiple="multiple" accept=".dat">
+          <input class="layui-btn" id="input-file" type='file' name='myfile' lay-verify="" onchange="selectSeries(this)" multiple="multiple" accept=".dat">
           <button class="layui-btn" id="btn-delete" type="button">删除</button>
         </div>
       </div>

@@ -77,19 +77,24 @@ $(function () {
         type: 'POST',
         data: reqData,
         success: function (res) {
-          if (res.code === '9999') {
-            if (res.msg.indexOf('天级')>-1) {
-              layer.alert('对不起，此手机号码一天只能接受10条验证码');
-            }
-            if (res.msg.indexOf('小时级')>-1) {
-              layer.alert('对不起，此手机号码一小时只能接受5条验证码');
-            }
-            if (res.msg.indexOf('分钟级')>-1) {
-              layer.alert('对不起，此手机号码一分钟只能接受1条验证码');
-            }
-          } else {
-            console.log(res);
+          if (res.code === '0002') {
+            layer.msg(res.msg);
+          } else if (res.code === '0000'){
+            layer.msg("短信验证码" + res.msg + "(30分钟内有效)");
           }
+          // if (res.code === '9999') {
+          //   if (res.msg.indexOf('天级')>-1) {
+          //     layer.alert('对不起，此手机号码一天只能接受10条验证码');
+          //   }
+          //   if (res.msg.indexOf('小时级')>-1) {
+          //     layer.alert('对不起，此手机号码一小时只能接受5条验证码');
+          //   }
+          //   if (res.msg.indexOf('分钟级')>-1) {
+          //     layer.alert('对不起，此手机号码一分钟只能接受1条验证码');
+          //   }
+          // } else {
+          //   console.log(res);
+          // }
         },
         error: function (err) {
           // layer.alert(err.msg);
@@ -112,7 +117,10 @@ $(function () {
         data: reqData,
         success: function (res) {
           console.log(res);
-          if (res.msg) {
+          if (res.code === '9999') {
+            layer.alert("请填入获得的验证码");
+          }
+          if (res.code && res.code !== '9999') {
             layer.alert(res.msg);
           }
           var roleInfo = JSON.stringify({
@@ -136,12 +144,12 @@ $(function () {
               break;
 
             case '2':
-              window.location.href = 'checkAdminPanel.html';
+              window.location.href = 'checkPanel.html';
               
               break;
             
             case '3':
-              window.location.href = 'checkAdminPanel.html';
+              window.location.href = 'checkPanel.html';
               
               break;
 

@@ -23,6 +23,13 @@ $(function () {
 
   var ADDRESS_REVOKEAPPLICATION = '/api/revokeApplication';
 
+  var ADDRESS_GETBLZT = '/api/get_blzt';
+
+  var ADDRESS_SAVERZJL = '/api/save_rzjl';
+
+  var ADDRESS_FLOWCHART = '/api/flowchart_info';
+
+
   layui.use(['layer', 'form'], function () {
     var layer = layui.layer;
     var form = layui.form;
@@ -32,10 +39,6 @@ $(function () {
     var currentRoleInfo = JSON.parse(window.sessionStorage.getItem('roleInfo'));
 
 
-    //管理员用户切换到管理系统的入口
-    $("#goToAdmin").click(function () {
-      window.location.href = './admin.html'
-    })
 
     //登录另外一个用户后，回到之前页面会重新刷新，显示之后登录的账号信息
     document.addEventListener('visibilitychange', function () { //浏览器切换事件
@@ -48,6 +51,12 @@ $(function () {
         }
       }
     });
+
+
+    //管理员用户切换到管理系统的入口
+    $("#goToAdmin").click(function () {
+      window.location.href = './admin.html'
+    })
 
 
     //----------------------------展示用户个人信息------------------------------------//
@@ -123,13 +132,14 @@ $(function () {
     // }
 
 
-    if (roleInfo.role === '0' || roleInfo.role === '2') {
+    if (roleInfo.role === '0') {
       $('#content-init').hide();
       $('#content-apply').show();
       $('#btn-checkUsers').hide();
       $('#btn-checkApplications').hide();
       $('#btn-needAuthority').hide();
       $('#btn-applyAuthenrization').addClass('btn-selected');
+      $("#goToAdmin").hide();
       getApplicationInfo();
     } else if (roleInfo.role === '1') {
       $('#content-init').hide();
@@ -139,6 +149,12 @@ $(function () {
       $('#btn-checkUsers').show();
       $('#btn-checkApplications').show();
       $('#btn-needAuthority').show();
+      $("#goToAdmin").hide();
+    } else {
+      $('#content-init').hide();
+      $('#content-apply').show();
+      $('#btn-applyAuthenrization').addClass('btn-selected');
+      getApplicationInfo();
     }
 
 
@@ -259,7 +275,7 @@ $(function () {
     //     async: false,
     //     success: function (dataXzqdm) {
     //       console.log(dataXzqdm);
-          
+
     //       console.log('get xzqdm success');
     //       $.each(dataXzqdm, function (idx, obj) {
     //         if (obj.dm.slice(-4) === '0000') {
@@ -440,7 +456,7 @@ $(function () {
           }
 
           //ssqy根据sqdj里面的xmddm来 2018/06/25
-          $("#select-ssqydm option").each(function () {         
+          $("#select-ssqydm option").each(function () {
             if ($(this).val() === userInfo.ssqy) {
               $(this).attr('selected', true);
               form.render('select', 'select-ssqy-filter');
@@ -564,7 +580,7 @@ $(function () {
       };
 
       console.log(reqDataUserInfo);
-      
+
 
       if (sqrlx === '甲方用户') {
         sqrlx = '0';
@@ -632,13 +648,13 @@ $(function () {
               $('#btn-reset').hide();
 
               newUser = '0';
-              
+
             } else {
               layer.msg('更新用户信息成功', {
                 time: 1000
               });
             }
-        
+
 
             $.ajax({
               url: ADDRESS_GETUSERINFO,
@@ -674,7 +690,7 @@ $(function () {
 
                 $('#div-zt').show();
                 $('#show-zt').text(zt);
-                
+
 
                 sqr = userInfo.sqr;
                 sqrlx = userInfo.sqrlx;
@@ -714,7 +730,7 @@ $(function () {
         });
       } else {
         layer.open({
-          resize: false,          
+          resize: false,
           type: 2,
           title: '申请授权',
           area: ['60%', '90%'],
@@ -744,11 +760,13 @@ $(function () {
           }, {
             field: 'cpmc',
             title: '产品名称',
-            sortable: true
+            sortable: true,
+            align: 'center'
           }, {
             field: 'sqlx',
             title: '授权类型',
             sortable: true,
+            align: 'center',
             formatter: function (value, row, index) {
               switch (value) {
                 case '1':
@@ -765,11 +783,13 @@ $(function () {
           {
             field: 'swhtmc',
             title: '合同名称',
-            sortable: true
+            sortable: true,
+            align: 'center'
           }, {
             field: 'swlxr',
             title: '商务联系人',
-            sortable: true
+            sortable: true,
+            align: 'center'
           }, {
             field: 'jmg',
             title: '使用加密狗',
@@ -795,11 +815,13 @@ $(function () {
           {
             field: 'sqsl',
             title: '数量',
-            sortable: true
+            sortable: true,
+            align: 'center'
           }, {
             field: 'sqxks',
             title: '许可数',
-            sortable: true
+            sortable: true,
+            visible: false
           }, {
             field: 'jzsj',
             title: '截止时间',
@@ -815,14 +837,21 @@ $(function () {
           }, {
             field: 'shzt',
             title: '审核状态',
-            sortable: true
+            sortable: true,
+            align: 'center'
+          }, {
+            field: 'bllc',
+            title: '办理流程',
+            align: 'center'
           }, {
             field: 'operation',
             title: '操作',
             align: 'center',
             formatter: function (value, row, index) {
-              var revoke = '<button class="layui-btn layui-btn-xs btn-revoke" onclick="revokeApplication(\'' + row.index + '\')">撤销申请</button>';
-              return revoke;
+              if (row.shzt !== '申请已办结' && row.shzt !== '不予办理') {
+                var revoke = '<button class="layui-btn layui-btn-xs btn-revoke" onclick="revokeApplication(\'' + row.index + '\')">撤销申请</button>';
+                return revoke;
+              }
             }
           }
         ];
@@ -834,11 +863,13 @@ $(function () {
           }, {
             field: 'cpmc',
             title: '产品名称',
-            sortable: true
+            sortable: true,
+            align: 'center'
           }, {
             field: 'sqlx',
             title: '授权类型',
             sortable: true,
+            align: 'center',
             formatter: function (value, row, index) {
               switch (value) {
                 case '1':
@@ -877,11 +908,13 @@ $(function () {
           {
             field: 'sqsl',
             title: '数量',
-            sortable: true
+            sortable: true,
+            align: 'center'
           }, {
             field: 'sqxks',
             title: '许可数',
-            sortable: true
+            sortable: true,
+            visible: false
           }, {
             field: 'jzsj',
             title: '截止时间',
@@ -897,14 +930,28 @@ $(function () {
           }, {
             field: 'shzt',
             title: '审核状态',
-            sortable: true
+            sortable: true,
+            align: 'center'
+          }, {
+            field: 'bllc',
+            title: '办理流程',
+            align: 'center',
+            formatter: function (value, row, index) {
+              // var flowchart = '<button class="layui-btn layui-btn-xs btn-flowchart" onclick="openFlowchart(\'' + row.index + '\')">流程图</button>';
+              var flowchart = "<button class='layui-btn layui-btn-xs btn-flowchart' onclick='openFlowchart(" + JSON.stringify(row) + ")'>流程图</button>";
+              return flowchart;
+            }
           }, {
             field: 'operation',
             title: '操作',
             align: 'center',
             formatter: function (value, row, index) {
-              var revoke = '<button class="layui-btn layui-btn-xs btn-revoke" onclick="revokeApplication(\'' + row.index + '\')">撤销申请</button>';
-              return revoke;
+              // var revoke = '<button class="layui-btn layui-btn-xs btn-revoke" onclick="revokeApplication(\'' + row.index + '\')">撤销申请</button>';
+              // return revoke;
+              if (row.shzt !== '申请已办结' && row.shzt !== '不予办理') {
+                var revoke = '<button class="layui-btn layui-btn-xs btn-revoke" onclick="revokeApplication(\'' + row.index + '\')">撤销申请</button>';
+                return revoke;
+              }
             }
           }
         ];
@@ -950,8 +997,46 @@ $(function () {
 
     }
 
-    revokeApplication = function (index) {
+    openFlowchart = function (row) {
 
+      var reqData = {
+        "cpdm": row.cpdm,
+        "xmddm": row.xmddm,
+        "user_index": row.user_index
+      };
+      $.ajax({
+        type: "GET",
+        url: ADDRESS_FLOWCHART,
+        data: reqData,
+        success: function (res) {
+          console.log(res);
+
+          if (!res.fsr && !res.sqshr) {
+            res.sfnb = '1';
+          } else {
+            res.sfnb = '0';
+          }
+          res.shzt = row.shzt;
+
+          if (row.bz) {
+            res.bz = row.bz;
+          }
+
+          window.sessionStorage["flowchart"] = JSON.stringify(res);
+          layer.open({
+            resize: false,
+            type: 2,
+            title: '流程图',
+            area: ['50%', '100%'],
+            content: 'http://' + window.location.host + '/flowchart.html'
+          });
+
+        }
+      });
+
+    }
+
+    revokeApplication = function (index) {
       layer.confirm('确定撤销此申请？', function (idx) {
         var reqDataRevoke = {
           'index': index
@@ -1000,9 +1085,9 @@ $(function () {
       // } else {
       //   window.sessionStorage["sqrlx"] = '1';  
       // }
-     
+
       layer.open({
-        resize: false,                  
+        resize: false,
         type: 2,
         title: '详细信息',
         area: ['50%', '90%'],
@@ -1063,11 +1148,11 @@ $(function () {
 
       //如果为所属区域，option的label里外加代码
       if (data[0].dm.length === 6) {
-        tpl = $("#select-ssqy-tpl").html();        
+        tpl = $("#select-ssqy-tpl").html();
       } else {
         tpl = $("#select-tpl").html();
       }
-      
+
 
       var rendered = RenderData(tpl, {
         option: options
@@ -1174,29 +1259,35 @@ $(function () {
         }, {
           field: 'xzqdm',
           title: '行政区代码',
-          sortable: true
+          sortable: true,
+          align: 'center'
         }, {
           field: 'dwmc',
           title: '单位名称',
-          sortable: true
+          sortable: true,
+          align: 'center'
         },
         {
           field: 'yhm',
           title: '用户名',
-          sortable: true
+          sortable: true,
+          align: 'center'
         },
         {
           field: 'lxdh',
           title: '联系电话',
-          sortable: true
+          sortable: true,
+          align: 'center'
         }, {
           field: 'wechat',
           title: '微信号',
-          sortable: true
+          sortable: true,
+          align: 'center'
         }, {
           field: 'rzzt',
           title: '认证状态',
           sortable: true,
+          align: 'center',
           formatter: function (value, row, index) {
             switch (value) {
               case '1':
@@ -1241,7 +1332,7 @@ $(function () {
       //   columns: columnsUncheckedUsers
       // });
 
-      var indexLoading = layer.load(1);      
+      var indexLoading = layer.load(1);
 
       $.ajax({
         url: ADDRESS_UNCHECKEDUSERS,
@@ -1309,7 +1400,7 @@ $(function () {
           "shyj": ""
         };
         console.log(reqDataCheckUsers);
-        
+
         $.ajax({
           url: ADDRESS_CHECKEDUSERS,
           type: 'POST',
@@ -1349,7 +1440,7 @@ $(function () {
         }
       });
       layer.open({
-        resize: false,                  
+        resize: false,
         type: 1,
         title: '拒绝认证',
         area: ['30%', '50%'],
@@ -1371,7 +1462,7 @@ $(function () {
           }
 
           var reqDataCheckUsers = {
-            "index": index,                 
+            "index": index,
             "sftg": "0",
             "shyj": shyj
           };
@@ -1413,19 +1504,23 @@ $(function () {
       var columnsUncheckedApplications = [{
           field: 'yhm',
           title: '用户名',
-          sortable: true
+          sortable: true,
+          align: 'center'
         }, {
           field: 'dwmc',
           title: '单位名称',
-          sortable: true
+          sortable: true,
+          align: 'center'
         }, {
           field: 'cpmc',
           title: '软件名称',
           sortable: true,
+          align: 'center'
         }, {
           field: 'sqlx',
           title: '授权类型',
           sortable: true,
+          align: 'center',
           formatter: function (value, row, index) {
             switch (value) {
               case '1':
@@ -1441,11 +1536,13 @@ $(function () {
         }, {
           field: 'swhtmc',
           title: '商务合同名称',
-          sortable: true
+          sortable: true,
+          align: 'center'
         }, {
           field: 'swlxr',
           title: '商务联系人',
-          sortable: true
+          sortable: true,
+          align: 'center'
         }, {
           field: 'xzqdm',
           title: '行政区',
@@ -1542,8 +1639,9 @@ $(function () {
           title: '操作',
           align: 'center',
           formatter: function (value, row, index) {
-            var allow = '<button class="layui-btn layui-btn-xs btn-allow" onclick="allowApplications(\'' + row.index + '\')">通过认证</button>';
-            var refuse = '<button class="layui-btn layui-btn-xs layui-btn-danger btn-refuse" onclick="refuseApplications(\'' + row.index + '\')">拒绝认证</button>';
+            // onclick="allowApplications(\'' + row.index + '\')"
+            var allow = "<button class='layui-btn layui-btn-xs btn-allow' onclick='allowApplications(" + JSON.stringify(row) + ")'>通过认证</button>";
+            var refuse = "<button class='layui-btn layui-btn-xs layui-btn-danger btn-refuse' onclick='refuseApplications(" + JSON.stringify(row) + ")'>拒绝认证</button>";
             return allow + refuse;
           }
         }
@@ -1564,7 +1662,6 @@ $(function () {
       $.ajax({
         url: ADDRESS_UNCHECKEDAPPLICATIONS,
         type: 'GET',
-        // async:false,
         success: function (res) {
           layer.close(indexLoading);
           console.log(res);
@@ -1606,20 +1703,22 @@ $(function () {
           console.log(err);
         }
       });
+
     }
 
-    allowApplications = function (index) {
+    allowApplications = function (row) {
+      console.log(row);
       layer.alert('确认通过此项授权申请！', {
         title: '通过认证'
       }, function () {
         var reqDataCheckApplications = {
-          "index": index,
+          "index": row.index,
           "sftg": "1",
           "shyj": ""
         };
 
         console.log(reqDataCheckApplications);
-        
+
         $.ajax({
           url: ADDRESS_CHECKEDAPPLICATIONS,
           type: 'POST',
@@ -1630,7 +1729,48 @@ $(function () {
               // getUncheckedApplications();
               layer.msg('此申请审核完成！', {
                 time: 1000,
-                end: getUncheckedApplications
+                end: function () {
+                  getUncheckedApplications();
+
+                  if (row.blzt === "4" && row.jmg === "0" && row.sqlx === "1") {
+                    setTimeout(function () {
+                      $.ajax({
+                        type: "GET",
+                        url: ADDRESS_GETBLZT,
+                        async: false,
+                        data: {
+                          "sqxx_index": row.index
+                        },
+                        success: function (res) {
+                          console.log(res);
+
+                          if (res.blzt === "8") {
+                            var reqSaveRzjlData = {
+                              "sqxx_index": row.index,
+                              "sqr": row.yhm,
+                              "sqrdw": row.dwmc,
+                              "lxdh": row.lxdh,
+                              "yxdz": row.yxdz,
+                              "cpmc": row.cpmc,
+                              "sqsl": row.sqsl,
+                              "bljg": "1",
+                              "bz": "无"
+                            };
+                            $.ajax({
+                              type: "POST",
+                              url: ADDRESS_SAVERZJL,
+                              data: reqSaveRzjlData,
+                              success: function (response) {
+                                console.log(response);
+                              }
+                            });
+                          }
+                        }
+                      });
+                    }, 5000);
+
+                  }
+                }
               });
             } else if (res.msg) {
               layer.alert(res.msg);
@@ -1644,7 +1784,7 @@ $(function () {
     }
 
 
-    refuseApplications = function (index) {
+    refuseApplications = function (row) {
       $.ajax({
         url: ADDRESS_APPLICATIONREJECTREASON,
         type: 'GET',
@@ -1659,7 +1799,7 @@ $(function () {
         }
       });
       layer.open({
-        resize: false,                  
+        resize: false,
         type: 1,
         title: '拒绝认证',
         area: ['30%', '50%'],
@@ -1677,7 +1817,7 @@ $(function () {
             shyj = commonShyj + ',' + otherShyj;
           }
           var reqDataCheckApplications = {
-            "index": index,           
+            "index": row.index,
             "sftg": "0",
             "shyj": shyj
           };
@@ -1695,7 +1835,45 @@ $(function () {
               } else if (res.code === '0000') {
                 layer.msg('此申请审核完成！', {
                   time: 1000,
-                  end: getUncheckedApplications
+                  end: function () {
+                    getUncheckedApplications();
+
+
+                    $.ajax({
+                      type: "GET",
+                      url: ADDRESS_GETBLZT,
+                      async: false,
+                      data: {
+                        "sqxx_index": row.index
+                      },
+                      success: function (res) {
+                        console.log(res);
+
+                        if (res.blzt === "9") {
+                          var reqSaveRzjlData = {
+                            "sqxx_index": row.index,
+                            "sqr": row.yhm,
+                            "sqrdw": row.dwmc,
+                            "lxdh": row.lxdh,
+                            "yxdz": row.yxdz,
+                            "cpmc": row.cpmc,
+                            "sqsl": row.sqsl,
+                            "bljg": "0",
+                            "bz": shyj
+                          };
+                          $.ajax({
+                            type: "POST",
+                            url: ADDRESS_SAVERZJL,
+                            data: reqSaveRzjlData,
+                            success: function (response) {
+                              console.log(response);
+                            }
+                          });
+                        }
+                      }
+                    });
+
+                  }
                 });
                 // getUncheckedApplications();
               }
@@ -1721,7 +1899,7 @@ $(function () {
       window.sessionStorage["checkDetails"] = checkDetails;
 
       layer.open({
-        resize: false,                  
+        resize: false,
         type: 2,
         title: '详细信息',
         area: ['50%', '90%'],
@@ -1737,19 +1915,23 @@ $(function () {
       var columnsNeedAuthority = [{
           field: 'yhm',
           title: '用户名',
-          sortable: true
+          sortable: true,
+          align: 'center'
         }, {
           field: 'dwmc',
           title: '单位名称',
-          sortable: true
+          sortable: true,
+          align: 'center'
         }, {
           field: 'cpmc',
           title: '软件名称',
           sortable: true,
+          align: 'center'
         }, {
           field: 'sqlx',
           title: '授权类型',
           sortable: true,
+          align: 'center',
           formatter: function (value, row, index) {
             switch (value) {
               case '1':
@@ -1828,6 +2010,7 @@ $(function () {
         }, {
           field: 'blzt',
           title: '办理状态',
+          align: 'center',
           // visible: false,
           formatter: function (value, row, index) {
             switch (value) {
@@ -1853,7 +2036,7 @@ $(function () {
                 return '在线授权成功'
                 break;
               case '8':
-                return '审核完成'
+                return '制作完成'
                 break;
               case '9':
                 return '不予办理'
@@ -1869,8 +2052,8 @@ $(function () {
           align: 'center',
           visible: false,
           formatter: function (value, row, index) {
-            var allow = '<button class="layui-btn layui-btn-xs btn-allow" onclick="allowCreate(' + '\'' + row.index + '\'' + ',' + '\'' + row.lxdh + '\''+ ')">制作完成</button>';
-            var refuse = '<button class="layui-btn layui-btn-xs layui-btn-danger btn-refuse" onclick="refuseCreate(' + '\'' + row.index + '\'' + ',' + '\'' + row.lxdh + '\''+ ')">不予办理</button>';
+            var allow = '<button class="layui-btn layui-btn-xs btn-allow" id="allow-create-btn" onclick="allowCreate(' + '\'' + row.index + '\'' + ',' + '\'' + row.lxdh + '\'' + ')">制作完成</button>';
+            var refuse = '<button class="layui-btn layui-btn-xs layui-btn-danger btn-refuse" id="refuse-create-btn" onclick="refuseCreate(' + '\'' + row.index + '\'' + ',' + '\'' + row.lxdh + '\'' + ')">不予办理</button>';
             return allow + refuse;
           }
         }
@@ -1886,7 +2069,7 @@ $(function () {
       // });
 
       var indexLoading = layer.load(1);
-      
+
 
       $.ajax({
         url: ADDRESS_NEEDAUTHORITY,
@@ -1945,7 +2128,7 @@ $(function () {
       window.sessionStorage["checkDetails"] = checkDetails;
 
       layer.open({
-        resize: false,                          
+        resize: false,
         type: 2,
         title: '详细信息',
         area: ['50%', '90%'],
@@ -1956,99 +2139,101 @@ $(function () {
       });
     });
 
-    allowCreate = function (index,lxdh) {
-      layer.alert('确认已经完成授权制作并发送', {
-        title: '通过认证'
-      }, function () {
-        var reqDataCheckedAuthority = {
-          'index': index,
-          'lxdh': lxdh,
-          'sftg': '1',
-          'shyj': '申请属实，予以通过'
-        };
-        $.ajax({
-          url: ADDRESS_CHECKEDAUTHORITY,
-          type: 'POST',
-          data: reqDataCheckedAuthority,
-          success: function (res) {
-            layer.msg('审核通过，授权已经制作并发送', {
-              time: 1000,
-              end: getNeedAuthority
-            });
-            // getNeedAuthority();
-          },
-          error: function (err) {
-            console.log(err);
-          }
-        });
-      });
-    };
+    // allowCreate = function (index,lxdh) {
+    //   layer.alert('确认已经完成授权制作并发送', {
+    //     title: '通过认证'
+    //   }, function () {
+    //     var reqDataCheckedAuthority = {
+    //       'index': index,
+    //       'lxdh': lxdh,
+    //       'sftg': '1',
+    //       'shyj': '申请属实，予以通过'
+    //     };
+    //     $.ajax({
+    //       url: ADDRESS_CHECKEDAUTHORITY,
+    //       type: 'POST',
+    //       data: reqDataCheckedAuthority,
+    //       success: function (res) {
+    //         layer.msg('审核通过，授权已经制作并发送', {
+    //           time: 1000,
+    //           end: function () { 
+    //             getNeedAuthority();
+    //           } 
+    //         });
+    //         // getNeedAuthority();
+    //       },
+    //       error: function (err) {
+    //         console.log(err);
+    //       }
+    //     });
+    //   });
+    // };
 
 
-    refuseCreate = function (index,lxdh) {
-      $.ajax({
-        url: ADDRESS_APPLICATIONREJECTREASON,
-        type: 'GET',
-        async: false,
-        success: function (res) {
-          $('#select-shyj').empty();
-          $('#select-shyj').append('<option value="" selected="selected" disabled="disabled">请选择</option>')
-          for (var i = 0; i < res.length; i++) {
-            $('#select-shyj').append('<option value="' + res[i] + '">' + res[i] + '</option>');
-          }
-          $('#select-shyj').append('<option value="其它意见">其它意见</option>');
-        }
-      });
-      layer.open({
-        resize: false,                          
-        type: 1,
-        title: '拒绝认证',
-        area: ['30%', '50%'],
-        content: $('#div-refuseShyj').html(),
-        btn: ['拒绝认证', '取消'],
-        yes: function (idx) {
-          var shyj;
-          var otherShyj = $('.layui-layer .refuseShyj textarea').val().trim();
-          var commonShyj = $('.layui-layer .select-refuseshyj').find("option:selected").text();
-          if (commonShyj === '请选择' || commonShyj === '其它意见') {
-            shyj = otherShyj;
-          } else if (otherShyj === '') {
-            shyj = commonShyj;
-          } else {
-            shyj = commonShyj + ',' + otherShyj;
-          }
-          var reqDataCheckedAuthority = {
-            "index": index,
-            'lxdh': lxdh,            
-            "sftg": "0",
-            "shyj": shyj
-          };
+    // refuseCreate = function (index,lxdh) {
+    //   $.ajax({
+    //     url: ADDRESS_APPLICATIONREJECTREASON,
+    //     type: 'GET',
+    //     async: false,
+    //     success: function (res) {
+    //       $('#select-shyj').empty();
+    //       $('#select-shyj').append('<option value="" selected="selected" disabled="disabled">请选择</option>')
+    //       for (var i = 0; i < res.length; i++) {
+    //         $('#select-shyj').append('<option value="' + res[i] + '">' + res[i] + '</option>');
+    //       }
+    //       $('#select-shyj').append('<option value="其它意见">其它意见</option>');
+    //     }
+    //   });
+    //   layer.open({
+    //     resize: false,                          
+    //     type: 1,
+    //     title: '拒绝认证',
+    //     area: ['30%', '50%'],
+    //     content: $('#div-refuseShyj').html(),
+    //     btn: ['拒绝认证', '取消'],
+    //     yes: function (idx) {
+    //       var shyj;
+    //       var otherShyj = $('.layui-layer .refuseShyj textarea').val().trim();
+    //       var commonShyj = $('.layui-layer .select-refuseshyj').find("option:selected").text();
+    //       if (commonShyj === '请选择' || commonShyj === '其它意见') {
+    //         shyj = otherShyj;
+    //       } else if (otherShyj === '') {
+    //         shyj = commonShyj;
+    //       } else {
+    //         shyj = commonShyj + ',' + otherShyj;
+    //       }
+    //       var reqDataCheckedAuthority = {
+    //         "index": index,
+    //         'lxdh': lxdh,            
+    //         "sftg": "0",
+    //         "shyj": shyj
+    //       };
 
 
-          console.log(reqDataCheckedAuthority);
+    //       console.log(reqDataCheckedAuthority);
 
-          $.ajax({
-            url: ADDRESS_CHECKEDAUTHORITY,
-            type: 'POST',
-            data: reqDataCheckedAuthority,
-            success: function (res) {
-              console.log(res);
-              if (res.code === '0000') {
-                layer.msg('审核未通过，如有疑问请联系工作人员', {
-                  time: 1000,
-                  end: getNeedAuthority
-                });
-                // getNeedAuthority();
-              }
-            },
-            error: function (err) {
-              console.log(err);
-            }
-          });
-          layer.close(idx);
-        }
-      });
-    };
+    //       $.ajax({
+    //         url: ADDRESS_CHECKEDAUTHORITY,
+    //         type: 'POST',
+    //         data: reqDataCheckedAuthority,
+    //         success: function (res) {
+    //           console.log(res);
+    //           if (res.code === '0000') {
+    //             layer.msg('审核未通过，如有疑问请联系工作人员', {
+    //               time: 1000,
+    //               end: getNeedAuthority
+    //             });
+    //             // getNeedAuthority();
+    //           }
+    //         },
+    //         error: function (err) {
+    //           console.log(err);
+    //         }
+    //       });
+    //       layer.close(idx);
+    //     }
+    //   });
+    // };
 
   })
 

@@ -26,3 +26,7 @@ html,
   .layui-form-select dl {
     max-height: 200px
   }
+
+  .required-mark {
+    color: red;
+  }

@@ -281,3 +281,7 @@ td {
 .pagination-detail {
   display: none
 }
+
+.required-mark {
+  color: red;
+}

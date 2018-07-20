@@ -5,6 +5,8 @@ $(function () {
   var ADDRESS_CHECKEDAUTHORITY = '/api/checked_authority';
 
   var ADDRESS_XZQMC = '/api/xzqmc';
+
+  var ADDRESS_SAVERZJL = '/api/save_rzjl';
   
 
 
@@ -157,6 +159,25 @@ $(function () {
             layer.msg('审核通过，授权已经制作并发送',{time:1000,end:function () {
               var index = parent.layer.getFrameIndex(window.name); //获取当前窗体索引
               parent.layer.close(index); //执行关闭
+              var reqSaveRzjlData = {
+                "sqxx_index":details.index,
+                "sqr":details.yhm,
+                "sqrdw":details.dwmc,
+                "lxdh":details.lxdh,
+                "yxdz":details.yxdz,
+                "cpmc":details.cpmc,
+                "sqsl":details.sqsl,
+                "bljg":"1",
+                "bz":"无"
+              };
+              $.ajax({
+                type: "POST",
+                url: ADDRESS_SAVERZJL,
+                data: reqSaveRzjlData,
+                success: function (response) {
+                  console.log(response); 
+                }
+              });
             }});
           },
           error: function (err) {
@@ -221,6 +242,26 @@ $(function () {
               layer.msg('审核未通过，如有疑问请联系工作人员',{time:1000,end:function () {
                 var index = parent.layer.getFrameIndex(window.name); //获取当前窗体索引
                 parent.layer.close(index); //执行关闭
+
+                var reqSaveRzjlData = {
+                  "sqxx_index":details.index,
+                  "sqr":details.yhm,
+                  "sqrdw":details.dwmc,
+                  "lxdh":details.lxdh,
+                  "yxdz":details.yxdz,
+                  "cpmc":details.cpmc,
+                  "sqsl":details.sqsl,
+                  "bljg":"0",
+                  "bz":shyj
+                };
+                $.ajax({
+                  type: "POST",
+                  url: ADDRESS_SAVERZJL,
+                  data: reqSaveRzjlData,
+                  success: function (response) {
+                    console.log(response); 
+                  }
+                });
               }});
             },
             error: function (err) {

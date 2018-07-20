@@ -49,30 +49,51 @@ $(function () {
         $('#div-jfsy').show();
         $('#div-swhtmc').hide();
         $('#div-swlxr').hide();
+        $('#input-swhtmc').attr({
+          'lay-verify': ''
+        });
+        $('#input-swlxr').attr({
+          'lay-verify': ''
+        });
         break;
 
       default:
         break;
     }
 
-    form.on('radio(filter-jfsy)', function(data){
+    form.on('radio(filter-jfsy)', function (data) {
       console.log(data.value); //被点击的radio的value值
       if (data.value === "1") {
         $('#div-swhtmc').show();
         $('#div-swlxr').show();
+        $('#input-swhtmc').attr({
+          'lay-verify': 'required'
+        });
+        $('#input-swlxr').attr({
+          'lay-verify': 'required'
+        });
       } else {
+        $('#input-swhtmc').attr({
+          'lay-verify': ''
+        });
+        $('#input-swlxr').attr({
+          'lay-verify': ''
+        });
         $('#input-swhtmc').val('');
         $('#input-swlxr').val('');
         $('#div-swhtmc').hide();
         $('#div-swlxr').hide();
       }
-    });  
+    });
 
 
     //----------------满足单机授权和服务器授权的不同条件-----------------------------//
     form.on('select(sqlx-filter)', function (data) {
       if (data.value === '2') {
         $('#div-sqxks').show();
+        $('#input-sqxks').attr({
+          'lay-verify': 'required'
+        });
         // $("input[name='jmg']").attr({
         //   disabled: 'disabled'
         // });
@@ -157,7 +178,8 @@ $(function () {
       success: function (res) {
         provinceData = res;
         loadSelectOptionsXzqdm($('#select-xzqdmProvince'), provinceData);
-        form.render(null,'xzqdm-filter');
+        // $("#select-xzqdmProvince").prepend("<option value=''>请选择</option>");
+        form.render(null, 'xzqdm-filter');
 
         $('.multiSelect').append('<input placeholder="请选择" style="line-height:2;background-color:#fff;border:none" disabled>');
         // if (sfnb === '0') {
@@ -174,15 +196,17 @@ $(function () {
 
 
     form.on('select(xzqdmProvince-filter)', function (data) {
-      var xzqdmProvinceAmount = $('#select-xzqdmProvince').val().length;
+      // var xzqdmProvinceAmount = $('#select-xzqdmProvince').val().length;
+      var xzqdmProvince = $('#select-xzqdmProvince').val();
 
-      if (xzqdmProvinceAmount === 1) {
+      if (xzqdmProvince) {
         // $('#select-xzqdmDistrict').next().show();
         // $('#select-xzqdmCity').next().empty();
         // $('#select-xzqdmCity').next().show();
         var reqDataCity = {
           "xzqjb": "2",
-          "xzqdm": $('#select-xzqdmProvince').val()[0]
+          // "xzqdm": $('#select-xzqdmProvince').val()[0]
+          "xzqdm": xzqdmProvince
         };
 
         $.ajax({
@@ -195,9 +219,10 @@ $(function () {
           success: function (res) {
             cityData = res;
             loadSelectOptionsXzqdm($('#select-xzqdmCity'), cityData);
+            // $('#select-xzqdmCity').append('<option value="">请选择</option>');
             // form.render();
-            form.render(null,'xzqdm-filter');
-            
+            form.render(null, 'xzqdm-filter');
+
             $('#select-xzqdmDistrict').next().hide();
             // if (sfnb === '0') {
             //   $('input[title="自定义截止时间"]').next().hide();
@@ -239,7 +264,7 @@ $(function () {
             districtData = res;
             loadSelectOptionsXzqdm($('#select-xzqdmDistrict'), districtData);
             // form.render();
-            form.render(null,'xzqdm-filter');
+            form.render(null, 'xzqdm-filter');
             // if (sfnb === '0') {
             //   $('input[title="自定义截止时间"]').next().hide();
             // }
@@ -278,7 +303,10 @@ $(function () {
 
     //------------------------------------加载多选行政区---------------------------------//
     function loadSelectOptionsXzqdm($selector, data) {
-      var options = [];
+      var options = [{
+        mc: '请选择',
+        dm: ''
+      }];
       $.each(data, function (idx, obj) {
         options.push({
           mc: obj.mc,
@@ -303,21 +331,47 @@ $(function () {
     //----------------------------------------------------------------------------------//
 
 
+    Array.prototype.remove = function (val) {
+      var index = this.indexOf(val);
+      if (index > -1) {
+        this.splice(index, 1);
+      }
+    };
+
 
 
     $('#btn-delete').click(function () {
       var value = $('#input-sqxlm').val();
-      if (value.indexOf(',') > 0) {
+
+      console.log(value);
+
+      if (value) {
+        var sqxlmInputArr = value.split(',');
+        console.log(sqxlmInputArr[0]);
+        if (sqxlmInputArr.length === 1) {
+          sqxlmsArray = [];
+        }
+        sqxlmsArray.remove(sqxlmInputArr[0]); 
+      } else {
+        sqxlmsArray = [];
+      }
+
+
+      if (value.indexOf(',') > -1) {
         value = value.replace(/.*?\,/, '');
       } else {
         value = '';
       }
       $('#input-sqxlm').val(value);
       $('#input-file').val('');
+
+      console.log(sqxlmsArray);
+      
+      
     });
 
 
-    
+
     // form.on('select(cpdm-filter)',function(data){
     //     console.log(data.value);
     //     console.log( $('#select-cpdm').siblings('.layui-form-select').find('dd.layui-this').text() );
@@ -331,8 +385,8 @@ $(function () {
 
       if ($('#input-sqsl').val() !== amountSqxlm.toString()) {
         layer.msg('申请数量与授权序列码个数不一致，请修改！')
-      } else if(amountSqxlm > 10){
-        layer.msg('申请数量不得超过10个，请修改！')        
+      } else if (amountSqxlm > 10) {
+        layer.msg('申请数量不得超过10个，请修改！')
       } else {
         var reqDataApplication = {
           swhtmc: $('#input-swhtmc').val(),
@@ -357,7 +411,7 @@ $(function () {
         } else if ($('#select-xzqdmCity').val().length !== 0) {
           reqDataApplication.xzqdm = $('#select-xzqdmCity').val().join(',');
         } else {
-          reqDataApplication.xzqdm = $('#select-xzqdmProvince').val().join(',');
+          reqDataApplication.xzqdm = $('#select-xzqdmProvince').val();
         }
 
         if ($('#select-sqlx').val() === '2') {

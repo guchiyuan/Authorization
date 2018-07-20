@@ -14,7 +14,6 @@
   <!-- <link href="https://cdn.bootcss.com/amazeui/2.7.2/css/amazeui.css" rel="stylesheet"> -->
 
   <style>
-    
   </style>
 </head>
 
@@ -52,6 +51,7 @@
     <div class="layui-col-md11" id="main-container">
       <div id="top-bar" style="text-align: right">
         <a id="welcomeUser" href="javascript:void(0)"></a>&nbsp&nbsp&nbsp
+        <a id="goToAdmin" href="javascript:void(0)">管理系统</a>&nbsp&nbsp&nbsp
         <a id="logout" href="javascript:void(0)">退出登录</a>
       </div>
       <div class="layui-row" id="content-container">
@@ -59,7 +59,7 @@
           <div class="title">
             <span>我的申请</span>
             <button id='btn-addApplication' class="layui-btn layui-btn-sm" style="float: right;display: none">
-              <i class="layui-icon">&#xe654;</i>
+              <i class="layui-icon">&#xe654;</i>新增申请
             </button>
           </div>
           <div class="" id="filter-container">
@@ -69,13 +69,13 @@
                 <div class="layui-input-block">
                   <select class="layui-select" id="shztFilter" name="shztFilter" lay-verify="" lay-filter="shztFilter">
                     <option value="" selected>全部</option>
-                    <option value="1">待认证</option>
+                    <!-- <option value="1">待认证</option> -->
                     <option value="2">待审核</option>
                     <option value="3">一审通过</option>
                     <option value="4">二审通过</option>
-                    <option value="5">三审通过</option>
-                    <option value="6">授权失败</option>
-                    <option value="7">授权成功</option>
+                    <option value="5">审核通过</option>
+                    <option value="6">在线授权失败</option>
+                    <!-- <option value="7">授权成功</option> -->
                     <option value="8">审核完成</option>
                     <option value="9">不予办理</option>
                   </select>
@@ -181,7 +181,8 @@
           </div>
           <form class="layui-form" action="">
             <div class="layui-form-item">
-              <label class="layui-form-label" for="input-sqr">申请人</label>
+              <label class="layui-form-label" for="input-sqr">
+                <span class="required-mark">* </span>申请人</label>
               <div class="layui-input-block">
                 <input id="input-sqr" type="text" name="input-sqr" required lay-verify="required" placeholder="请输入申请人姓名" autocomplete="off"
                   class="layui-input">
@@ -189,7 +190,8 @@
             </div>
 
             <div class="layui-form-item">
-              <label class="layui-form-label" for="select-sqrlx">申请人类型</label>
+              <label class="layui-form-label" for="select-sqrlx">
+                <span class="required-mark">*</span>申请人类型</label>
               <div class="layui-input-block layui-form" lay-filter="select-sqrlx-filter">
                 <select class="" id="select-sqrlx" name="select-sqrlx" lay-verify="required" lay-filter="sqrlx-filter">
                   <option value="">请选择</option>
@@ -200,7 +202,8 @@
             </div>
 
             <div class="layui-form-item" id="div-sqrdw">
-              <label class="layui-form-label" for="input-sqrdw">申请人单位</label>
+              <label class="layui-form-label" for="input-sqrdw">
+                <span class="required-mark">*</span>申请人单位</label>
               <div class="layui-input-block">
                 <input id="input-sqrdw" type="text" name="input-sqrdw" required lay-verify="required" placeholder="请输入单位名称" autocomplete="off"
                   class="layui-input" lay-filter="sqrdw-filter">
@@ -208,7 +211,8 @@
             </div>
 
             <div class="layui-form-item" id="div-xmzxx">
-              <label class="layui-form-label" for="select-xmzxx">项目组信息</label>
+              <label class="layui-form-label" for="select-xmzxx">
+                <span class="required-mark">*</span>项目组信息</label>
               <div class="layui-input-block layui-form" lay-filter="xmzxx-filter">
                 <select class="" id="select-xmzxx" name="select-xmzxx" lay-verify="required" lay-filter="xmzxx-filter">
                   <option value="">请选择</option>
@@ -217,7 +221,8 @@
             </div>
 
             <div class="layui-form-item" id="select-ssqy">
-              <label class="layui-form-label" for="select-city">所属区域</label>
+              <label class="layui-form-label" for="select-city">
+                <span class="required-mark">* </span>所属区域</label>
               <div class="layui-input-block layui-form" lay-filter="select-ssqy-filter">
                 <!-- <select id="select-province" class="select-ssqy" name="select-province" lay-verify="required" lay-filter="province-filter">
                   <option value=""></option>
@@ -243,7 +248,8 @@
             </div> -->
 
             <div class="layui-form-item">
-              <label class="layui-form-label" for="input-lxdh">手机号</label>
+              <label class="layui-form-label" for="input-lxdh">
+                <span class="required-mark">* </span>手机号</label>
               <div class="layui-input-block">
                 <input id="input-lxdh" type="text" name="input-lxdh" required lay-verify="required|phone" placeholder="请输入手机号" autocomplete="off"
                   class="layui-input uneditable">
@@ -259,7 +265,8 @@
             </div>
 
             <div class="layui-form-item">
-              <label class="layui-form-label" for="input-jsyx">邮箱</label>
+              <label class="layui-form-label" for="input-jsyx">
+                <span class="required-mark">* </span>邮箱</label>
               <div class="layui-input-block">
                 <input id="input-jsyx" type="email" name="input-jsyx" required lay-verify="required|email" placeholder="请输入邮箱地址" autocomplete="off"
                   class="layui-input">

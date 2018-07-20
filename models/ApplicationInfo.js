@@ -14,7 +14,7 @@ module.exports = function (sequlize, dataTypes) {
         , SQXKS: { type: dataTypes.INTEGER }
         , SQSJ: { type: dataTypes.DATE }
         , JZSJ: { type: dataTypes.DATE }
-        , BZ: { type: dataTypes.STRING }
+        , BZ: { type: dataTypes.JSON }
         , XMDDM: { type: dataTypes.STRING }
         , SQNR: { type: dataTypes.TEXT }
         , SQSL: { type: dataTypes.INTEGER }

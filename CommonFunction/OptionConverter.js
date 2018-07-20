@@ -10,7 +10,7 @@ module.exports = {
             case "4":
                 return "二审通过";
             case "5":
-                return "三审通过"
+                return "审核通过"
             case "6":
                 return "在线授权失败";
             case "7":

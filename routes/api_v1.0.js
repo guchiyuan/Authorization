@@ -26,16 +26,8 @@ function twoDigits(d) {
 
 Date.prototype.toMysqlFormat = function () {
     // return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate()) + " " + twoDigits(this.getHours()) + ":" + twoDigits(this.getUTCMinutes()) + ":" + twoDigits(this.getUTCSeconds());
-    // return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate());
-    return this.getFullYear() + "-" + twoDigits(1 + this.getMonth()) + "-" + twoDigits(this.getDate());
+    return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate()+1);
 };
-
-
-// Date.prototype.toMysqlFormat1 = function () {
-//     // return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate()) + " " + twoDigits(this.getHours()) + ":" + twoDigits(this.getUTCMinutes()) + ":" + twoDigits(this.getUTCSeconds());
-//     // return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate() + 1);
-//     return this.getFullYear() + "-" + twoDigits(1 + this.getMonth()) + "-" + twoDigits(this.getDate() + 1);
-// };
 
 
 function catchAsyncErrors(fn) {
@@ -287,7 +279,6 @@ router.get('/user_history', catchAsyncErrors(async (req, res) => {
             return {
                 index: r.INDEX,
                 sqlx: r.SQLX,
-                cpdm: r.CPDM,
                 cpmc: r.CPMC,
                 jmg: r.SFJMG,
                 xzqdm: r.SQXZDM,
@@ -300,8 +291,6 @@ router.get('/user_history', catchAsyncErrors(async (req, res) => {
                 sqxks: r.SQXKS,
                 jfsy: r.JFSY,
                 shzt: optionConverter.ConvertApplicationStatus(r.BLZT),
-                user_index: r.YHRZXX_INDEX,
-                bz: r.BZ
             }
         });
         return res.json(result);
@@ -521,15 +510,8 @@ router.post('/submitApplication', catchAsyncErrors(async (req, res, next) => {
             throw new AppCommonError("项目组经理不负责审核该软件产品", "0001");
     } else {
         //// 外部用户逻辑（内部帮甲方申请或者甲方自己申请转给商务人员）
-        let xmXzq;
         let targetXzqs = reqParams.xzqdm.split(',');
-        if (targetXzqs.length > 1) {
-            xmXzq = common.GetXZQArray(targetXzqs[0]);
-        } else if (targetXzqs[0].substr(targetXzqs[0].length - 2) !== "00") {
-            xmXzq = common.GetXZQArray(targetXzqs[0]);
-        } else {
-            xmXzq = targetXzqs[0];
-        }
+        let xmXzq = common.GetXZQArray(targetXzqs[0]);
         let appRecord = await orm.ApplicationRecord.findOne({
             where: {
                 XMDDM: xmXzq,
@@ -543,16 +525,16 @@ router.post('/submitApplication', catchAsyncErrors(async (req, res, next) => {
     }
 
     let jmg = reqParams.sqlx == "1" ? reqParams.jmg : "0"; // 授权类型（临时、长期、自定义）
-    let jzsj = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toMysqlFormat();
+    let jzsj = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
     if (reqParams.jzsjlx == "2") {
-        jzsj = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toMysqlFormat();
+        jzsj = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
     }
     if (reqParams.jzsjlx == "3") {
-        jzsj = new Date(parseInt(reqParams.jzsj)).toMysqlFormat();
+        jzsj = new Date(parseInt(reqParams.jzsj));
     }
 
     console.log(jzsj);
-
+    
 
     let blzt = userInfo.ZT == "4" ? "2" : "1";
     let newApplication = await orm.ApplicationInfo.create({
@@ -566,7 +548,7 @@ router.post('/submitApplication', catchAsyncErrors(async (req, res, next) => {
         BLZT: blzt,
         SFJMG: jmg,
         SQSJ: new Date(Date.now()).toMysqlFormat(),
-        JZSJ: jzsj,
+        JZSJ: jzsj.toMysqlFormat(),
         XMDDM: sxmddm,
         SQSL: reqParams.sqsl,
         SWHTMC: reqParams.swhtmc,
@@ -870,7 +852,7 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
             })
             .then(results => {
                 // console.log(results);
-
+                
                 let responseObj = results.map(result => {
                     return {
                         yhm: result.YHM,
@@ -912,7 +894,7 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
 
 
                 return res.json(uncheckedApplications);
-
+                
             })
 
 
@@ -1133,18 +1115,18 @@ router.post('/checked_users', catchAsyncErrors(async (req, res) => {
             } else {
                 let count = await orm.CustomerInfo.update({
                     ZT: "9",
-                    BZ: req.body.shyj
+                    BZ: req.body.shzt
                 }, {
                     where: {
                         INDEX: {
                             [orm.Sequelize.Op.in]: indexes_update
                         },
-                        ZT: "3"
+                        ZT: "2"
                     }
                 });
                 rows = rows + count[0];
                 if (rzzt === '3') {
-                    await authOper.sendMessage(lxdh, config.refuse_user_sendMessage_3 + '，拒绝理由：' + req.body.shyj + ')');
+                    await authOper.sendMessage(lxdh, config.refuse_user_sendMessage_3);
                 }
 
             }
@@ -1169,7 +1151,7 @@ router.post('/checked_users', catchAsyncErrors(async (req, res) => {
             } else {
                 let count = await orm.CustomerInfo.update({
                     ZT: "9",
-                    BZ: req.body.shyj
+                    BZ: req.body.shzt
                 }, {
                     where: {
                         INDEX: {
@@ -1180,7 +1162,7 @@ router.post('/checked_users', catchAsyncErrors(async (req, res) => {
                 });
                 rows = rows + count[0];
                 if (rzzt === '2') {
-                    await authOper.sendMessage(lxdh, config.refuse_user_sendMessage_2 + ',拒绝理由：' + req.body.shyj + ')');
+                    await authOper.sendMessage(lxdh, config.refuse_user_sendMessage_2);
                 }
             }
         }
@@ -1205,7 +1187,7 @@ router.post('/checked_users', catchAsyncErrors(async (req, res) => {
             } else {
                 let count = await orm.CustomerInfo.update({
                     ZT: "9",
-                    BZ: req.body.shyj
+                    BZ: req.body.shzt
                 }, {
                     where: {
                         INDEX: {
@@ -1216,7 +1198,7 @@ router.post('/checked_users', catchAsyncErrors(async (req, res) => {
                 });
                 rows = rows + count[0];
                 if (rzzt === '1') {
-                    await authOper.sendMessage(lxdh, config.refuse_user_sendMessage_1 + ',拒绝理由：' + req.body.shyj + ')');
+                    await authOper.sendMessage(lxdh, config.refuse_user_sendMessage_1);
                 }
             }
         }
@@ -1299,16 +1281,13 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
                 let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0");
                 MakeAuthority(rows_make.map(item => item.INDEX));
                 if (blzt === '2') {
-                    // await authOper.sendMessage(lxdh, config.allow_application_sendMessage_nbsq);
+                    await authOper.sendMessage(lxdh, config.allow_application_sendMessage_nbsq);
                 }
 
             } else {
                 let count = await orm.ApplicationInfo.update({
                     BLZT: "9",
-                    BZ: {
-                        "shyj": req.body.shyj,
-                        "shzt": "审核"
-                    }
+                    BZ: req.body.shyj
                 }, {
                     where: {
                         INDEX: {
@@ -1319,7 +1298,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
                 });
                 rows = rows + count[0];
                 if (blzt === '2') {
-                    // await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_nbsq);
+                    await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_nbsq);
                 }
             }
         }
@@ -1349,10 +1328,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
             } else {
                 let count = await orm.ApplicationInfo.update({
                     BLZT: "9",
-                    BZ: {
-                        "shyj": req.body.shyj,
-                        "shzt": "三审"
-                    }
+                    BZ: req.body.shyj
                 }, {
                     where: {
                         INDEX: {
@@ -1363,7 +1339,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
                 });
                 rows = rows + count[0];
                 if (blzt === '4') {
-                    await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_3 + '，拒绝理由：' + req.body.shyj + ')');
+                    await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_3);
                 }
             }
         }
@@ -1392,10 +1368,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
             } else {
                 let count = await orm.ApplicationInfo.update({
                     BLZT: "9",
-                    BZ: {
-                        "shyj": req.body.shyj,
-                        "shzt": "二审"
-                    }
+                    BZ: req.body.shyj
                 }, {
                     where: {
                         INDEX: {
@@ -1406,7 +1379,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
                 });
                 rows = rows + count[0];
                 if (blzt === '3') {
-                    await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_2 + '，拒绝理由：' + req.body.shyj + ')');
+                    await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_2);
                 }
 
             }
@@ -1437,10 +1410,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
             } else {
                 let count = await orm.ApplicationInfo.update({
                     BLZT: "9",
-                    BZ: {
-                        "shyj": req.body.shyj,
-                        "shzt": "一审"
-                    }
+                    BZ: req.body.shyj
                 }, {
                     where: {
                         INDEX: {
@@ -1451,7 +1421,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
                 });
                 rows = rows + count[0];
                 if (blzt === '2') {
-                    await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_1 + '，拒绝理由：' + req.body.shyj + ')');
+                    await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_1);
                 }
             }
         }
@@ -1558,11 +1528,7 @@ router.post('/checked_authority', catchAsyncErrors(async (req, res) => {
             // await authOper.sendMessage(req.body.lxdh, config.allow_sendMessage_create);                                            
         } else {
             let count = await orm.ApplicationInfo.update({
-                BLZT: "9",
-                BZ: {
-                    "shyj": req.body.shyj,
-                    "shzt": "制作授权"
-                }
+                BLZT: "9"
             }, {
                 where: {
                     INDEX: {
@@ -2373,8 +2339,6 @@ router.post('/product/cpdj', catchAsyncErrors(async (req, res) => {
                 }
             });
         }
-        console.log(destroyResult);
-
         if (destroyResult === 0) {
             throw new AppCommonError("产品登记信息删除失败", "0001");
         } else {
@@ -2424,226 +2388,6 @@ router.get('/get_ssqy', catchAsyncErrors(async (req, res) => {
 }));
 
 
-//---------------日志记录管理新增接口-------------------//
-router.get('/get_log', catchAsyncErrors(async (req, res) => {
-    let payload = jwt.decode(req.cookies.jwt);
-    if (!payload || !payload.phone) {
-        throw new AppCommonError("无法获取已登陆信息，请重新登陆", "0005");
-    }
-
-    let logs = await orm.LogRecord.findAll({
-        include: [{
-            model: orm.User,
-            as: "Users"
-        }]
-    });
-
-    let responseObjects = logs.map(item => {
-        return {
-            index: item.INDEX,
-            sqr: item.SQR,
-            sqrdw: item.SQRDW,
-            lxdh: item.LXDH,
-            yxdz: item.YXDZ,
-            sqsj: item.SQSJ,
-            cpmc: item.CPMC,
-            sqsl: item.SQSL,
-            sqnr: item.SQNR,
-            bljssj: item.BLJSSJ,
-            bljg: item.BLJG === "1" ? "办理完成" : "不予办理",
-            bz: item.BZ,
-            zzsqr: item.Users.JSCY
-        }
-    });
-
-    let rzjl = {
-        "code": "0000",
-        "data": responseObjects
-    }
-
-    return res.json(rzjl)
-}));
-
-router.get('/get_blzt', catchAsyncErrors(async (req, res) => {
-    let payload = jwt.decode(req.cookies.jwt);
-    if (!payload || !payload.phone) {
-        throw new AppCommonError("无法获取已登陆信息，请重新登陆", "0005");
-    }
-
-    let blzt = await orm.ApplicationInfo.findOne({
-        where: {
-            SQXX_INDEX: req.query.sqxx_index
-        },
-        attributes: [
-            ['BLZT', 'blzt'],
-            ['SQNR', 'sqnr'],
-            ['BZ', 'bz']
-        ]
-    });
-
-
-    return res.json(blzt)
-}));
-
-
-router.post('/save_rzjl', catchAsyncErrors(async (req, res) => {
-    let payload = jwt.decode(req.cookies.jwt);
-    if (!payload || !payload.phone) {
-        throw new AppCommonError("无法获取已登陆信息，请重新登陆", "0005");
-    }
-
-    let reqParams = req.body;
-
-    let sqxx = await orm.ApplicationInfo.findOne({
-        where: {
-            INDEX: reqParams.sqxx_index
-        }
-    });
-
-    let rzjl = await orm.LogRecord.create({
-        SQXX_INDEX: reqParams.sqxx_index,
-        SQR: reqParams.sqr,
-        SQRDW: reqParams.sqrdw,
-        LXDH: reqParams.lxdh,
-        YXDZ: reqParams.yxdz,
-        CPMC: reqParams.cpmc,
-        SQSL: reqParams.sqsl,
-        SQNR: sqxx.SQNR,
-        SQSJ: sqxx.SQSJ,
-        BLJG: reqParams.bljg,
-        BLJSSJ: new Date(Date.now()).toMysqlFormat(),
-        BZ: reqParams.bz,
-        ZZSQR: payload.jsIndex,
-        INDEX: uuidv1()
-    });
-
-    if (!rzjl) {
-        throw new AppCommonError("无法创建新申请", "0006");
-    } else {
-        return res.json({
-            code: "0000"
-        });
-    }
-}));
-
-router.post('/delete_log', catchAsyncErrors(async (req, res) => {
-    let reqParams = req.body;
-    let destroyResult;
-    for (let i = 0; i < reqParams.index.length; i++) {
-        destroyResult = await orm.LogRecord.destroy({
-            where: {
-                INDEX: reqParams.index[i]
-            }
-        });
-    }
-
-    if (destroyResult === 0)
-        throw new AppCommonError("批量删除失败", "0001");
-    else
-        return res.json({
-            code: '0000'
-        });
-}));
-
-
-//-------------------------获取审核流程信息--------------------------------------------//
-router.get('/flowchart_info', catchAsyncErrors(async (req, res) => {
-    let resObj;
-    if (req.query.xmddm !== '') {
-        let flowchartInfo = await orm.ApplicationRecord.findAll({
-            where: {
-                CPDM: req.query.cpdm,
-                XMDDM: req.query.xmddm
-            }
-        });
-
-        console.log(flowchartInfo);
-
-        let flowchartInfo_jf;
-        flowchartInfo.map(item => {
-            if (item.FSR && item.SQSHR) {
-                flowchartInfo_jf = item;
-            }
-        });
-
-
-        let csr = await orm.User.findOne({
-            where: {
-                INDEX: flowchartInfo_jf.CSR
-            }
-        });
-
-        let fsr = await orm.User.findOne({
-            where: {
-                INDEX: flowchartInfo_jf.FSR
-            }
-        })
-
-        let sqshr = await orm.User.findOne({
-            where: {
-                INDEX: flowchartInfo_jf.SQSHR
-            }
-        })
-
-        resObj = {
-            csr: csr.JSCY,
-            csrbm: csr.SSXMZ,
-            csrlxdh: csr.LXDH,
-            fsr: fsr.JSCY,
-            fsrbm: fsr.SSXMZ,
-            fsrlxdh: fsr.LXDH,
-            sqshr: sqshr.JSCY,
-            sqshrbm: sqshr.SSXMZ,
-            sqshrlxdh: sqshr.LXDH,
-        }
-    } else {
-        let yhrzxx = await orm.CustomerInfo.findOne({
-            where: {
-                INDEX: req.query.user_index
-            }
-        });
-        let yhdw = yhrzxx.YHDW;
-        let jscy = await orm.User.findAll({
-            where: {
-                SSXMZ: yhdw
-            }
-        });
-
-        let xmjlIndex;
-        let xmjlMc;
-        let xmjlSsxmz;
-        let xmjlLxdh;
-
-        jscy.map(item => {
-            if (item.JSDM.indexOf('7') > -1) {
-                xmjlIndex = item.INDEX;
-                xmjlMc = item.JSCY;
-                xmjlSsxmz = item.SSXMZ;
-                xmjlLxdh = item.LXDH;
-            }
-        });
-
-        let djxxInfo = await orm.ApplicationRecord.findOne({
-            where: {
-                CPDM: [req.query.cpdm, '0'],
-                CSR: xmjlIndex
-            }
-        });
-
-        if (djxxInfo) {
-            resObj = {
-                csr: xmjlMc,
-                csrbm: xmjlSsxmz,
-                csrlxdh: xmjlLxdh,
-            };
-        }
-
-
-    }
-
-    res.json(resObj)
-
-}));
 
 router.use((err, req, res, next) => {
     if (err instanceof AppCommonError) {

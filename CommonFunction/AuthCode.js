@@ -32,10 +32,11 @@ var funcGetAnthObj = (phone, code) => {
         objAuth = new Object();
         objAuth.phone = phone;
         objAuth.code = code;
-        objAuth.endtime = Date.now() + 5 * 60 * 1000;       // 验证码5分钟后过期
+        objAuth.endtime = Date.now() + 30 * 60 * 1000;       // 验证码5分钟后过期
         authCodeArray.push(objAuth);
     } else {
         objAuth.code = code;
+        objAuth.endtime = Date.now() + 30 * 60 * 1000;       // 验证码5分钟后过期        
     }
 }
 
@@ -45,29 +46,33 @@ module.exports = {
             throw new MyAppError('手机号为空', '0001');
         }
 
-        // try {
+        try {
             var num = Math.floor(Math.random() * 1000000);
-            funcGetAnthObj(phonecode, num);
             let status = await smsClient.sendSMS({
                 PhoneNumbers: phonecode,
                 SignName: '国图调查软件',
                 TemplateCode: 'SMS_136871663',
                 TemplateParam: '{"code":"' + num + '"}'
             })
-
+            
+            funcGetAnthObj(phonecode, num);
+            
             if (status.Code == 'isv.MOBILE_NUMBER_ILLEGAL')
                 throw new MyAppError('无效的手机号', '0003')
 
             if (status.Code != 'OK')
                 throw new MyAppError('发送短信验证码失败', '0002')
-        // }
-        // catch (error) {
-        //     console.log(error.message);
-        //     throw new MyAppError('发送短信验证码失败', '0002')
-        // }
+        }
+        catch (error) {
+            console.log(error.message);
+            throw new MyAppError('发送短信验证码失败', '0002')
+        }
     },
     valideAuthCode: async (phonecode, authcode) => {
         let objAuth = authCodeArray.find((item) => item.phone === phonecode);
+        console.log(objAuth.code,authcode);
+        console.log(Date.now(),objAuth.endtime);
+
         if (!objAuth)
             throw new MyAppError('验证码错误', '0002');
 
@@ -76,6 +81,8 @@ module.exports = {
 
         if (Date.now() > objAuth.endtime)
             throw new MyAppError('验证码过期，请重新获取', '0003');
+
+        
 
         return true;
     },
