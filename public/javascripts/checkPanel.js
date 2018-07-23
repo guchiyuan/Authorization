@@ -965,7 +965,9 @@ $(function () {
         pagination: true,
         pageSize: parseInt(($(window).height() - 300) / 35, 10) - 1,
         // search: true,
-        columns: columnsApplication
+        columns: columnsApplication,
+        sortName: 'jzsj', // 要排序的字段
+        sortOrder: 'desc', // 排序规则
       });
 
       var reqDataHistoryInfo = {
@@ -1090,7 +1092,7 @@ $(function () {
         resize: false,
         type: 2,
         title: '详细信息',
-        area: ['50%', '90%'],
+        area: ['55%', '90%'],
         content: 'http://' + window.location.host + '/historyDetails.html'
       });
     });
@@ -1731,43 +1733,44 @@ $(function () {
                 time: 1000,
                 end: function () {
                   getUncheckedApplications();
-
-                  if (row.blzt === "4" && row.jmg === "0" && row.sqlx === "1") {
-                    setTimeout(function () {
-                      $.ajax({
-                        type: "GET",
-                        url: ADDRESS_GETBLZT,
-                        async: false,
-                        data: {
-                          "sqxx_index": row.index
-                        },
-                        success: function (res) {
-                          console.log(res);
-
-                          if (res.blzt === "8") {
-                            var reqSaveRzjlData = {
-                              "sqxx_index": row.index,
-                              "sqr": row.yhm,
-                              "sqrdw": row.dwmc,
-                              "lxdh": row.lxdh,
-                              "yxdz": row.yxdz,
-                              "cpmc": row.cpmc,
-                              "sqsl": row.sqsl,
-                              "bljg": "1",
-                              "bz": "无"
-                            };
-                            $.ajax({
-                              type: "POST",
-                              url: ADDRESS_SAVERZJL,
-                              data: reqSaveRzjlData,
-                              success: function (response) {
-                                console.log(response);
-                              }
-                            });
+                  if ((row.blzt === "4" && row.jmg === "0" && row.sqlx === "1") || (!row.xmddm && !row.swhtmc && !row.swlxr)) {
+                    layer.msg('授权制作中请稍等',{
+                      time:10000,
+                      end: function getBlzt() {
+                        $.ajax({
+                          type: "GET",
+                          url: ADDRESS_GETBLZT,
+                          async: false,
+                          data: {
+                            "sqxx_index": row.index
+                          },
+                          success: function (res) {
+                            console.log(res);
+                            if (res.blzt === "8" || res.blzt === "5") {
+                              var reqSaveRzjlData = {
+                                "sqxx_index": row.index,
+                                "sqr": row.yhm,
+                                "sqrdw": row.dwmc,
+                                "lxdh": row.lxdh,
+                                "yxdz": row.yxdz,
+                                "cpmc": row.cpmc,
+                                "sqsl": row.sqsl,
+                                "bljg": "1",
+                                "bz": "无"
+                              };
+                              $.ajax({
+                                type: "POST",
+                                url: ADDRESS_SAVERZJL,
+                                data: reqSaveRzjlData,
+                                success: function (response) {
+                                  console.log(response);
+                                }
+                              });
+                            }
                           }
-                        }
-                      });
-                    }, 5000);
+                        });
+                      }
+                    });
 
                   }
                 }
@@ -1838,7 +1841,6 @@ $(function () {
                   end: function () {
                     getUncheckedApplications();
 
-
                     $.ajax({
                       type: "GET",
                       url: ADDRESS_GETBLZT,
@@ -1902,7 +1904,7 @@ $(function () {
         resize: false,
         type: 2,
         title: '详细信息',
-        area: ['50%', '90%'],
+        area: ['55%', '90%'],
         content: 'http://' + window.location.host + '/checkDetails.html'
       });
     });
@@ -2131,7 +2133,7 @@ $(function () {
         resize: false,
         type: 2,
         title: '详细信息',
-        area: ['50%', '90%'],
+        area: ['55%', '90%'],
         content: 'http://' + window.location.host + '/createDetails.html',
         end: function () {
           getNeedAuthority();

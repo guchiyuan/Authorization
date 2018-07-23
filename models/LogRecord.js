@@ -12,7 +12,7 @@ module.exports = function (sequlize, dataTypes) {
       , BLJSSJ: { type: dataTypes.DATE }
       , BLJG: { type: dataTypes.STRING }
       , BZ: { type: dataTypes.STRING }
-      , ZZSQR: { type: dataTypes.STRING }
+      , ZZBLR: { type: dataTypes.STRING }
       , INDEX: { type: dataTypes.STRING, primaryKey: true, field: "RZJL_INDEX" }
   }, {
           freezeTableName: true,

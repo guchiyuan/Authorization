@@ -49,7 +49,7 @@ db.CustomerInfo.hasMany(db.ApplicationInfo, { foreignKey: 'YHRZXX_INDEX', source
 db.ApplicationInfo.belongsTo(db.CustomerInfo, { foreignKey: 'YHRZXX_INDEX', targetKey: 'INDEX', as: 'Customers' });
 
 db.User.hasMany(db.LogRecord, { foreignKey: 'INDEX', sourceKey: 'INDEX', as: 'Logs' });
-db.LogRecord.belongsTo(db.User, { foreignKey: 'ZZSQR', targetKey: 'INDEX', as: 'Users' });
+db.LogRecord.belongsTo(db.User, { foreignKey: 'ZZBLR', targetKey: 'INDEX', as: 'Users' });
 
 // db.ApplicationInfo.hasOne(db.LogRecord, { foreignKey: 'SQXX_INDEX', sourceKey: 'INDEX', as: 'Applications' });
 // db.LogRecord.belongsTo(db.ApplicationInfo, { foreignKey: 'SQXX_INDEX', targetKey: 'INDEX', as: 'Logs' });

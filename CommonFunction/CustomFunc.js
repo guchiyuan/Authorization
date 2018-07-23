@@ -24,9 +24,9 @@ module.exports =
             let xzqArray = new Array();
             xzqArray.push(xzqdm);
             SubXZQDM(xzqArray, xzqdm);
-            xzqArray.splice(0, 1);
-            xzqArray[0] = xzqArray[0]+"00";
-            xzqArray[1] = xzqArray[1]+"0000";
+            // xzqArray.splice(0, 1);
+            xzqArray[1] = xzqArray[1]+"00";
+            xzqArray[2] = xzqArray[2]+"0000";
             return xzqArray;
         }
     }

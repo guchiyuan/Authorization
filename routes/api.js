@@ -523,23 +523,50 @@ router.post('/submitApplication', catchAsyncErrors(async (req, res, next) => {
         //// 外部用户逻辑（内部帮甲方申请或者甲方自己申请转给商务人员）
         let xmXzq;
         let targetXzqs = reqParams.xzqdm.split(',');
+        console.log(targetXzqs);
+        
         if (targetXzqs.length > 1) {
             xmXzq = common.GetXZQArray(targetXzqs[0]);
-        } else if (targetXzqs[0].substr(targetXzqs[0].length - 2) !== "00") {
-            xmXzq = common.GetXZQArray(targetXzqs[0]);
+            xmXzq.splice(0, 1);
         } else {
-            xmXzq = targetXzqs[0];
+            xmXzq = common.GetXZQArray(targetXzqs[0]);
         }
-        let appRecord = await orm.ApplicationRecord.findOne({
+
+        console.log(xmXzq);
+        
+        let appRecord = await orm.ApplicationRecord.findAll({
             where: {
                 XMDDM: xmXzq,
-                CPDM: reqParams.cpdm
+                CPDM: [reqParams.cpdm, '0']
             }
         });
         if (!appRecord) {
             throw new AppCommonError("用户所属区域没有对应的项目", "0001");
         }
-        sxmddm = appRecord.XMDDM; // 获取项目点代码
+
+        let xmddmArray = [];
+        appRecord.map(item => {
+            xmddmArray.push(item.XMDDM)
+        });
+
+        let countArray = [];
+        if (xmddmArray.length === 1) {
+            sxmddm = xmddmArray[0];
+        } else {
+            for (let i = 0; i < xmddmArray.length; i++) {
+                let regex = new RegExp('0','g');
+                let result = xmddmArray[i].match(regex);
+                let count = !result ? 0:result.length;
+                countArray.push(count);
+            }
+            let index = countArray.indexOf(Math.min(...countArray));
+            sxmddm = xmddmArray[index];            
+        }
+
+        console.log(sxmddm);
+        
+        
+        // sxmddm = appRecord.XMDDM; // 获取项目点代码
     }
 
     let jmg = reqParams.sqlx == "1" ? reqParams.jmg : "0"; // 授权类型（临时、长期、自定义）
@@ -818,6 +845,7 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
                 xzqdm: u.SQXZDM,
                 dwmc: u.Customers.YHDW,
                 lxdh: u.Customers.LXDH,
+                yxdz: u.Customers.YXDZ,
                 blzt: u.BLZT,
                 sqlx: u.SQLX,
                 cpmc: u.CPMC,
@@ -1344,7 +1372,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
                 let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0");
                 MakeAuthority(rows_make.map(item => item.INDEX));
                 if (blzt === '4') {
-                    await authOper.sendMessage(lxdh, config.allow_application_sendMessage_3);
+                    // await authOper.sendMessage(lxdh, config.allow_application_sendMessage_3);
                 }
             } else {
                 let count = await orm.ApplicationInfo.update({
@@ -1386,7 +1414,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
                 });
                 rows = rows + count[0];
                 if (blzt === '3') {
-                    await authOper.sendMessage(lxdh, config.allow_application_sendMessage_2);
+                    // await authOper.sendMessage(lxdh, config.allow_application_sendMessage_2);
                 }
 
             } else {
@@ -1432,7 +1460,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
                 });
                 rows = rows + count[0];
                 if (blzt === '2') {
-                    await authOper.sendMessage(lxdh, config.allow_application_sendMessage_1);
+                    // await authOper.sendMessage(lxdh, config.allow_application_sendMessage_1);
                 }
             } else {
                 let count = await orm.ApplicationInfo.update({
@@ -2452,7 +2480,7 @@ router.get('/get_log', catchAsyncErrors(async (req, res) => {
             bljssj: item.BLJSSJ,
             bljg: item.BLJG === "1" ? "办理完成" : "不予办理",
             bz: item.BZ,
-            zzsqr: item.Users.JSCY
+            zzblr: item.Users.JSCY
         }
     });
 
@@ -2513,7 +2541,7 @@ router.post('/save_rzjl', catchAsyncErrors(async (req, res) => {
         BLJG: reqParams.bljg,
         BLJSSJ: new Date(Date.now()).toMysqlFormat(),
         BZ: reqParams.bz,
-        ZZSQR: payload.jsIndex,
+        ZZBLR: payload.jsIndex,
         INDEX: uuidv1()
     });
 
