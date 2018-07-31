@@ -550,7 +550,17 @@ $(function () {
       });
     }
 
-
+    //----------------------重置用户信息-----------------------------//
+    $('#btn-reset').click(function () {
+      $('#input-sqr').val('');
+      $('#select-sqrlx').val('');
+      $('#input-sqrdw').val('');
+      $('#select-xmzxx').val('');
+      $('#input-wechat').val('');
+      $('#input-jsyx').val('');
+      $('#select-ssqydm').val('');
+      form.render('select');
+    })
 
 
 
@@ -1734,8 +1744,9 @@ $(function () {
                 end: function () {
                   getUncheckedApplications();
                   if ((row.blzt === "4" && row.jmg === "0" && row.sqlx === "1") || (!row.xmddm && !row.swhtmc && !row.swlxr)) {
-                    layer.msg('授权制作中请稍等',{
-                      time:10000,
+                    layer.msg('授权制作中请稍等,请勿关闭此窗口！', {
+                      time: 10000,
+                      shade: 0.6,
                       end: function getBlzt() {
                         $.ajax({
                           type: "GET",

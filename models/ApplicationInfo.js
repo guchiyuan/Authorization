@@ -1,4 +1,4 @@
-module.exports = function (sequlize, dataTypes) {
+﻿module.exports = function (sequlize, dataTypes) {
     const ApplicationInfo = sequlize.define('ApplicationInfo', {
         YHRZXX_INDEX: { type: dataTypes.STRING }
         , SQLX: { type: dataTypes.STRING }
@@ -14,7 +14,7 @@ module.exports = function (sequlize, dataTypes) {
         , SQXKS: { type: dataTypes.INTEGER }
         , SQSJ: { type: dataTypes.DATE }
         , JZSJ: { type: dataTypes.DATE }
-        , BZ: { type: dataTypes.JSON }
+        , BZ: { type: dataTypes.STRING }
         , XMDDM: { type: dataTypes.STRING }
         , SQNR: { type: dataTypes.TEXT }
         , SQSL: { type: dataTypes.INTEGER }

@@ -1,7 +1,12 @@
 'use strict';
 
 var flowchart = JSON.parse(window.sessionStorage.getItem('flowchart'));
+if (flowchart.bz) {
+  var flowchart_bz = JSON.parse(flowchart.bz);
+}
 console.log(flowchart);
+
+
 
 d3.select("svg").append("rect")
   .attr("x", 10)
@@ -105,8 +110,8 @@ if (flowchart.sfnb === '0') {
   } else if (flowchart.shzt === '待审核') {
     g.node('申请').style = "fill: #9AFF9A";
     g.node('一审').style = "fill: #EEE685";
-  } else if (flowchart.shzt === '不予办理' && flowchart.bz) {
-    let blztIndex = states_jf.indexOf(flowchart.bz.shzt);
+  } else if (flowchart.shzt === '不予办理' && flowchart_bz) {
+    let blztIndex = states_jf.indexOf(flowchart_bz.shzt);
 
     for (let i = 0; i <= blztIndex; i++) {
       g.node(states_jf[i]).style = "fill: #9AFF9A";
@@ -165,8 +170,8 @@ if (flowchart.sfnb === '1') {
   } else if (flowchart.shzt === '待审核') {
     g.node('申请').style = "fill: #9AFF9A";
     g.node('审核').style = "fill: #EEE685";
-  } else if (flowchart.shzt === '不予办理' && flowchart.bz) {
-    let blztIndex = states_nb.indexOf(flowchart.bz.shzt);
+  } else if (flowchart.shzt === '不予办理' && flowchart_bz) {
+    let blztIndex = states_nb.indexOf(flowchart_bz.shzt);
 
     for (let i = 0; i <= blztIndex; i++) {
       g.node(states_nb[i]).style = "fill: #9AFF9A";

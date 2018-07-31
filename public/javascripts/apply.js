@@ -272,7 +272,7 @@ $(function () {
             districtData = res;
             loadSelectOptionsXzqdm($('#select-xzqdmDistrict'), districtData);
             // form.render();
-            form.render(null, 'xzqdm-filter');
+            form.render(null, 'xzqdmDistrict-filter');
             // if (sfnb === '0') {
             //   $('input[title="自定义截止时间"]').next().hide();
             // }
@@ -359,7 +359,7 @@ $(function () {
         if (sqxlmInputArr.length === 1) {
           sqxlmsArray = [];
         }
-        sqxlmsArray.remove(sqxlmInputArr[0]); 
+        sqxlmsArray.remove(sqxlmInputArr[0]);
       } else {
         sqxlmsArray = [];
       }
@@ -374,8 +374,8 @@ $(function () {
       $('#input-file').val('');
 
       console.log(sqxlmsArray);
-      
-      
+
+
     });
 
 
@@ -485,10 +485,21 @@ function selectSeries(file) {
       reader.readAsText(file.files[i]);
       reader.onload = function (evt) {
         var series = evt.target.result;
-        var seriesStr = series + ',' + $('#input-sqxlm').val();
-        $('#input-sqxlm').val(seriesStr.substr(0, seriesStr.length - 1));
+        console.log(series);
+        //----------新增对授权序列码的控制--------------------------//
+        if (series.indexOf(',') > -1) {
+          layer.alert('上传的序列码内容不正确！')
+          console.log(sqxlmsArray);
+        } else {
+          if (sqxlmsArray.indexOf(series) > -1) {
+            layer.alert('存在重复授权序列码！')
+          } else {
+            var seriesStr = series + ',' + $('#input-sqxlm').val();
+            $('#input-sqxlm').val(seriesStr.substr(0, seriesStr.length - 1));
+            sqxlmsArray.push(series);
+          }
+        }
 
-        sqxlmsArray.push(series);
       }
     }
   }

@@ -80,7 +80,7 @@ $(function () {
           if (res.code === '0002') {
             layer.msg(res.msg);
           } else if (res.code === '0000'){
-            layer.msg("短信验证码" + res.msg + "(30分钟内有效)");
+            layer.msg("短信验证码" + res.msg);
           }
           // if (res.code === '9999') {
           //   if (res.msg.indexOf('天级')>-1) {

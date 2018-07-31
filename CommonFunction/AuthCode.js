@@ -32,11 +32,11 @@ var funcGetAnthObj = (phone, code) => {
         objAuth = new Object();
         objAuth.phone = phone;
         objAuth.code = code;
-        objAuth.endtime = Date.now() + 30 * 60 * 1000;       // 验证码5分钟后过期
+        objAuth.endtime = Date.now() + 5 * 60 * 1000;       // 验证码5分钟后过期
         authCodeArray.push(objAuth);
     } else {
         objAuth.code = code;
-        objAuth.endtime = Date.now() + 30 * 60 * 1000;       // 验证码5分钟后过期        
+        objAuth.endtime = Date.now() + 5 * 60 * 1000;       // 验证码5分钟后过期        
     }
 }
 

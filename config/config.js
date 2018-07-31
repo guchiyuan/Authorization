@@ -6,7 +6,7 @@ module.exports={
     // 数据库密码
     databasePwd:"gtis",
     // 数据库地址
-    hostAddress:"192.168.50.142",
+    hostAddress:"192.168.50.67",
 
     // // 数据库名
     // databaseName:"sqxt",
