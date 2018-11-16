@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>国图软件授权管理系统</title>
+  <link rel="stylesheet" href="libs/layui/css/layui.css">
+  <!-- <link href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet"> -->
+  <link href="libs/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="stylesheets/style.css">
+  <!-- <link href="stylesheets/fSelect.css" rel="stylesheet" type="text/css"> -->
+  <!-- <link href="https://cdn.bootcss.com/amazeui/2.7.2/css/amazeui.css" rel="stylesheet"> -->
+
+  <style>
+  </style>
+</head>
+
+<body>
+  <!-- <div class="layui-fluid"> -->
+  <div class="layui-row">
+    <div class="layui-col-md1" id="side-bar">
+      <header>
+        <span>国图软件</span>
+        </br>
+        <span>授权管理系统</span>
+      </header>
+      <div class="side-bar-btn">
+        <ul>
+          <li>
+            <button class="layui-btn btn-side" id="btn-applyAuthenrization">我的申请</button>
+          </li>
+          <li>
+            <button class="layui-btn btn-side" id="btn-checkUsers">审核用户</button>
+          </li>
+          <li>
+            <button class="layui-btn btn-side" id="btn-checkApplications">审核申请</button>
+          </li>
+          <li>
+            <button class="layui-btn btn-side" id="btn-needAuthority">制作授权</button>
+          </li>
+          <li>
+            <button class="layui-btn btn-side" id="btn-checkSendAuthority">发送授权</button>
+          </li>
+          <!-- <li>
+              <button class="layui-btn" id="btn-userInfo">个人信息</button>
+            </li> -->
+        </ul>
+
+      </div>
+    </div>
+
+    <div class="layui-col-md11" id="main-container">
+      <div id="top-bar" style="text-align: right">
+        <a id="welcomeUser" href="javascript:void(0)"></a>&nbsp&nbsp&nbsp
+        <a id="goToAdmin" href="javascript:void(0)">管理系统</a>&nbsp&nbsp&nbsp
+        <a id="logout" href="javascript:void(0)">退出登录</a>
+      </div>
+      <div class="layui-row" id="content-container">
+        <div class="layui-col-md9 content" id="content-apply" style="display: none">
+          <div class="title">
+            <span>我的申请</span>
+            <button id='btn-addApplication' class="layui-btn layui-btn-sm" style="float: right;display: none">
+              <i class="layui-icon">&#xe654;</i>新增申请
+            </button>
+          </div>
+          <div class="" id="filter-container">
+            <form class="layui-form" action="">
+              <div class="layui-form-item" style="width: 50%">
+                <label class="layui-form-label" for="shztFilter" style="font-size: 16px; font-weight: bold; text-align: left; padding-left: 0">审核状态：</label>
+                <div class="layui-input-block">
+                  <select class="layui-select" id="shztFilter" name="shztFilter" lay-verify="" lay-filter="shztFilter">
+                    <option value="" selected>全部</option>
+                    <!-- <option value="1">待认证</option> -->
+                    <option value="2">待审核</option>
+                    <option value="3">初审通过</option>
+                    <!-- <option value="4">二审通过</option> -->
+                    <option value="5">审核通过</option>
+                    <option value="6">在线授权失败</option>
+                    <option value="8a">发送授权</option>
+                    <!-- <option value="7">授权成功</option> -->
+                    <option value="8">申请成功</option>
+                    <option value="9">不予办理</option>
+                  </select>
+                  <!-- <button id="btn-shztFilter" class="layui-btn">查询</button> -->
+                </div>
+            </form>
+
+            <!-- <div class="layui-form-item">
+                  <span class="queryResult"></span>
+                </div> -->
+            </div>
+            <!-- <div class="layui-col-md1 filter" id="">待认证</div>
+              <div class="layui-col-md1 filter" id="">待审核</div>
+              <div class="layui-col-md1 filter" id="">初审通过</div>
+              <div class="layui-col-md1 filter" id="">二审通过</div>
+              <div class="layui-col-md1 filter" id="">二审通过</div>
+              <div class="layui-col-md1 filter" id="">授权成功</div>
+              <div class="layui-col-md1 filter" id="">授权失败</div>
+              <div class="layui-col-md1 filter" id="">审核完成</div>
+              <div class="layui-col-md1 filter" id="">不予办理</div> -->
+          </div>
+
+          <table class="myTable" id="applyHistoryTable"></table>
+
+        </div>
+
+
+        <div class="layui-col-md9 content" id="content-init">
+
+        </div>
+
+
+
+        <div class="layui-col-md9 content" id="content-checkUsers" style="display: none">
+          <div class="title">
+            <span>审核用户</span>
+            <!-- <button id='btn-addApplication' class="layui-btn layui-btn-sm" style="float: right">
+                  <i class="layui-icon">&#xe654;</i>
+                </button> -->
+          </div>
+          <!-- <div class="" id="filter-container">
+              <div class="layui-col-md2 filter" id="">待认证</div>
+              <div class="layui-col-md2 filter" id="">初审通过</div>
+              <div class="layui-col-md2 filter" id="">通过认证</div>
+              <div class="layui-col-md2 filter" id="">未通过认证</div>
+            </div> -->
+
+          <div class="layui-form-item" style="width: 20%;">
+            <!-- <div>
+              <input id="input-queryUser" type="text" name="input-query" required placeholder="输入手机号" autocomplete="off" class="layui-input layui-col-md6"
+                lay-filter="query-filter">
+            </div>
+            <div>
+              <button id="btn-queryUser" class="layui-btn layui-btn-sm" type="button" name="refresh" title="查询">
+                查询
+              </button>
+            </div> -->
+          </div>
+
+          <table class="myTable" id="uncheckedUsersTable"></table>
+
+        </div>
+
+        <div class="layui-col-md9 content" id="content-checkAppplications" style="display: none">
+          <div class="title">
+            <span>审核申请</span>
+            <!-- <button id='btn-addApplication' class="layui-btn layui-btn-sm" style="float: right">
+                    <i class="layui-icon">&#xe654;</i>
+                  </button> -->
+          </div>
+          <!-- <div class="" id="filter-container">
+              <div class="layui-col-md2 filter" id="">待认证</div>
+              <div class="layui-col-md2 filter" id="">初审通过</div>
+              <div class="layui-col-md2 filter" id="">通过认证</div>
+              <div class="layui-col-md2 filter" id="">未通过认证</div>
+            </div> -->
+
+          <button class="layui-btn layui-btn-xs btn-allow btn-batch-allow" style="margin-bottom:-70px; display: none">批量通过</button>
+          <table class="myTable" id="uncheckedApplicationsTable"></table>
+        </div>
+
+        <div class="layui-col-md9 content" id="content-needAuthority" style="display: none">
+          <div class="title">
+            <span>制作授权</span>
+            <button id='btn-create-exportXls' class="layui-btn layui-btn-sm" style="float: right;">
+              <i class="layui-icon">&#xe655;</i>导出报表(加密狗)
+            </button>
+          </div>
+          <!-- <div class="" id="filter-container">
+              <div class="layui-col-md2 filter" id="">待认证</div>
+              <div class="layui-col-md2 filter" id="">初审通过</div>
+              <div class="layui-col-md2 filter" id="">通过认证</div>
+              <div class="layui-col-md2 filter" id="">未通过认证</div>
+            </div> -->
+
+          <table class="myTable" id="needAuthorityTable"></table>
+
+        </div>
+
+
+        <div class="layui-col-md9 content" id="content-sendAuthority" style="display: none">
+          <div class="title">
+            <span>发送授权</span>
+            <button id='btn-exportXls' class="layui-btn layui-btn-sm" style="float: right;">
+              <i class="layui-icon">&#xe655;</i>导出报表
+            </button>
+          </div>
+          <table class="myTable" id="sendAuthorityTable"></table>
+
+        </div>
+
+
+        <div class="layui-col-md3" id="user-info">
+          <div class="title">
+            <span>我的信息</span>
+          </div>
+          <form class="layui-form" action="">
+            <div class="layui-form-item">
+              <label class="layui-form-label" for="input-sqr">
+                <span class="required-mark">* </span>申请人</label>
+              <div class="layui-input-block">
+                <input id="input-sqr" type="text" name="input-sqr" required lay-verify="required" placeholder="请输入申请人姓名" autocomplete="off"
+                  class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label" for="select-sqrlx">
+                <span class="required-mark">*</span>申请人类型</label>
+              <div class="layui-input-block layui-form" lay-filter="select-sqrlx-filter">
+                <select class="" id="select-sqrlx" name="select-sqrlx" lay-verify="required" lay-filter="sqrlx-filter">
+                  <option value="">请选择</option>
+                  <option value="0">甲方用户</option>
+                  <option value="1">内部用户</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="layui-form-item" id="div-sqrdw">
+              <label class="layui-form-label" for="input-sqrdw">
+                <span class="required-mark">*</span>申请人单位</label>
+              <div class="layui-input-block">
+                <input id="input-sqrdw" type="text" name="input-sqrdw" required lay-verify="required" placeholder="请输入单位全称" autocomplete="off"
+                  class="layui-input" lay-filter="sqrdw-filter">
+              </div>
+            </div>
+
+            <div class="layui-form-item" id="div-xmzxx">
+              <label class="layui-form-label" for="select-xmzxx">
+                <span class="required-mark">*</span>项目组信息</label>
+              <div class="layui-input-block layui-form" lay-filter="xmzxx-filter">
+                <select class="" id="select-xmzxx" name="select-xmzxx" lay-verify="required" lay-filter="xmzxx-filter">
+                  <option value="">请选择</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="layui-form-item" id="select-ssqy">
+              <label class="layui-form-label" for="select-city">
+                <span class="required-mark">* </span>所属区域</label>
+              <div class="layui-input-block layui-form" lay-filter="select-ssqy-filter">
+                <!-- <select id="select-province" class="select-ssqy" name="select-province" lay-verify="required" lay-filter="province-filter">
+                  <option value=""></option>
+                </select>
+                <select id="select-city" class="select-ssqy" name="select-city" lay-filter="city-filter">
+                  <option value=""></option>
+                </select>
+                <select id="select-district" class="select-ssqy" name="select-district" lay-filter="district-filter">
+                  <option value=""></option>
+                </select> -->
+                <select lay-search id="select-ssqydm" class="select-ssqy" name="select-ssqydm" lay-verify="required" lay-filter="ssqydm-filter">
+                  <option value=""></option>
+                </select>
+              </div>
+            </div>
+
+            <!-- <div class="layui-form-item" style="display: none" id="show-ssqy">
+              <label class="layui-form-label" for="">所属区域</label>
+              <div class="layui-input-block">
+                <input id="input-ssqy" type="text" name="input-ssqy" required lay-verify="" placeholder=" 请选择所属区域" autocomplete="off" class="layui-input"
+                  lay-filter="ssqy-filter">
+              </div>
+            </div> -->
+
+            <div class="layui-form-item">
+              <label class="layui-form-label" for="input-lxdh">
+                <span class="required-mark">* </span>手机号</label>
+              <div class="layui-input-block">
+                <input id="input-lxdh" type="text" name="input-lxdh" required lay-verify="required|phone" placeholder="请输入手机号" autocomplete="off"
+                  class="layui-input uneditable">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label" for="input-wechat">微信账号</label>
+              <div class="layui-input-block">
+                <input id="input-wechat" type="text" name="input-wechat" required lay-verify="" placeholder="请输入微信账号" autocomplete="off"
+                  class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label" for="input-jsyx">
+                <span class="required-mark">* </span>邮箱</label>
+              <div class="layui-input-block">
+                <input id="input-jsyx" type="email" name="input-jsyx" required lay-verify="required|email" placeholder="请输入邮箱地址" autocomplete="off"
+                  class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label" for="subscribe">
+                <span class="required-mark">*</span>关注公众号</label>
+              <div class="layui-input-block">
+                <img id="img-qrcode" style="width: 80px" src="" alt="">
+                <!-- <button id="btn-subscribe" type="button" class="layui-btn layui-btn-sm">扫码关注</button> -->
+                <!-- <input type="radio" name="subscribe" value="1" title="已关注">
+                  <input type="radio" name="subscribe" value="0" title="未关注"> -->
+              </div>
+            </div>
+
+            <div class="layui-form-item" style="display: none" id="div-zt">
+              <label class="layui-form-label" for="input-zt">认证状态</label>
+              <div class="layui-input-block">
+                <!-- <input id="input-zt" type="text" name="input-zt" required placeholder="" autocomplete="off" class="layui-input"> -->
+                <span id="show-zt"></span>
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <div class="" style="text-align: center;">
+                <button id="btn-submitUserInfo" class="layui-btn" lay-submit lay-filter="formUserInfo"></button>
+                <button id="btn-reset" type="button" class="layui-btn">重置</button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+    <!-- </div> -->
+
+    <!-- <div id="div-allowShyj" style="display: none">
+     
+      <div class="layui-form-item" style="margin: 5%">
+        <label class="">
+          <span>审核意见</span>
+        </label>
+        <select class="layui-select" id="select-shyj" name="select-shyj" lay-verify="required" lay-filter="shyj-filter" style="width: 50%">
+          <option selected="selected" disabled="disabled">请选择</option>
+          <option value="合作单位同意认证">合作单位同意认证</option>
+          <option value="我觉得你很不错">我觉得你很不错</option>
+          <option value="其它意见">其它意见</option>
+        </select>
+
+      </div>
+
+      <div class="layui-form-item" style="margin: 5%;">
+        <label class="">
+          <span>其它意见</span>
+        </label>
+        <textarea class="" name="input-allowShyj" id="input-allowShyj" cols="40" rows="5" style="width: 100%; margin-top: 10px">
+        </textarea>
+      </div>
+     
+    </div> -->
+
+    <div id="div-refuseShyj" style="display: none">
+      <!-- <form class="layui-form"> -->
+      <div class="layui-form-item" style="margin: 5%">
+        <label class="">
+          <span>审核意见</span>
+        </label>
+        <select class="layui-select select-refuseshyj" id="select-shyj" name="select-shyj" lay-verify="required" lay-filter="shyj-filter"
+          style="width: 50%">
+          <!-- <option selected="selected" disabled="disabled">请选择</option>
+          <option value="其它意见">其它意见</option> -->
+        </select>
+
+      </div>
+      <!-- </form> -->
+
+      <div class="layui-form-item refuseShyj" style="margin: 5%;">
+        <label class="">
+          <span>其它意见</span>
+        </label>
+        <textarea class="" name="input-refuseShyj" id="input-refuseShyj" class="" cols="40" rows="5" style="width: 100%; margin-top: 10px">
+        </textarea>
+      </div>
+      <!-- </form> -->
+    </div>
+
+    <div style="display: none" id="div-allowSendAuthority">
+      <form class="layui-form" action="" style="padding: 30px">
+        <label class="layui-form-label" for="input-postnumber" style="text-align: left">邮寄单号</label>
+        <div class="layui-form-item">
+          <!-- <div class="layui-input-block"> -->
+            <input id="input-postnumber" type="text" name="input-postnumber" required lay-verify="required" placeholder="请输入邮寄单号" autocomplete="off"
+              class="layui-input">
+          <!-- </div> -->
+        </div>
+      </form>
+    </div>
+
+
+    <script id="select-tpl" type="text/x-tpl-handlebars">
+      {{#option}}
+      <option value="{{dm}}">{{mc}}</option>
+      {{/option}}
+    </script>
+
+    <script id="select-ssqy-tpl" type="text/x-tpl-handlebars">
+      {{#option}}
+      <option value="{{dm}}">{{mc}}{{dm}}</option>
+      {{/option}}
+    </script>
+
+    <script src="libs/handlebars/handlebars-v4.0.5.min.js"></script>
+    <script src="javascripts/jquery-3.3.1.min.js"></script>
+    <!-- <script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script> -->
+    <!-- <script src="libs/bootstrap/js/bootstrap-v3.min.js"></script> -->
+    <script src="libs/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="libs/bootstrap-table/bootstrap-table-zh-CN.min.js"></script>
+    <script src="libs/bootstrap-table/extensions/export/bootstrap-table-export.js"></script>
+    <script src="libs/bootstrap-table/tableExport.js"></script>
+    <script src="libs/layui/layui.js"></script>
+    <!-- <script src="https://cdn.bootcss.com/amazeui/2.7.2/js/amazeui.min.js"></script> -->
+    <script src="javascripts/check_panel.js"></script>
+</body>
+
+</html>

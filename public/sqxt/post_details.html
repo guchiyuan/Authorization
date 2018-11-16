@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="libs/layui/css/layui.css">
+  <link rel="stylesheet" href="stylesheets/details.css">
+</head>
+<style>
+</style>
+
+<body>
+  <div id="checkDetails-container"></div>
+  <script id="checkDetails-tpl" type="text/x-tpl-handlebars">
+    <div class="container">
+      <div class="layui-row">
+        <div class="layui-col-xs12 content">  
+          <h2>邮寄信息</h2>
+        </div>
+      </div>
+      
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">收件人：</span>
+          <span>{{sjr}}</span>
+        </div>
+        <div class="layui-col-xs6 content" id="show-jfsy">
+          <span class="label layui-col-xs4">联系电话：</span>
+          <span>{{sjrlxdh}}</span>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs12 content">
+          <span class="label layui-col-xs2">收件地址：</span>
+          <span>{{sjrdz}}</span>
+        </div>
+      </div>
+      
+
+      <div class="layui-row">
+        <div class="layui-col-xs12 content">  
+          <h2>开票信息</h2>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">公司名称：</span>
+          <span>{{company}}</span>
+        </div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">公司地址：</span>
+          <span>{{companydz}}</span>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">公司电话：</span>
+          <span>{{companylxdh}}</span>
+        </div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">纳税识别号：</span>
+          <span>{{taxobjectid}}</span>
+        </div>
+      </div>
+
+      
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">开户银行：</span>
+          <span>{{bank}}</span>
+        </div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">银行账户：</span>
+          <span>{{account}}</span>
+        </div>
+      </div>
+                          <!-- <div class="layui-row">
+                            <div class="layui-col-xs12 content">
+                              <span class="label layui-col-xs2">公司名称：</span>
+                              <span>{{company}}</span>
+                            </div>
+                          </div>
+                    
+                          <div class="layui-row">
+                            <div class="layui-col-xs12 content">
+                              <span class="label layui-col-xs2">公司地址：</span>
+                              <span>{{companydz}}</span>
+                            </div>
+                          </div>
+                    
+                          <div class="layui-row">
+                            <div class="layui-col-xs12 content">
+                              <span class="label layui-col-xs2">公司电话：</span>
+                              <span>{{companylxdh}}</span>
+                            </div>
+                          </div>
+                    
+                          <div class="layui-row">
+                            <div class="layui-col-xs12 content">
+                              <span class="label layui-col-xs2">纳税识别号：</span>
+                              <span>{{taxobjectid}}</span>
+                            </div>
+                          </div> -->
+
+    </div>
+  </script>
+
+
+  <script src="javascripts/jquery-3.3.1.min.js"></script>
+  <script src="libs/handlebars/handlebars-v4.0.5.min.js"></script>
+  <script src="libs/layui/layui.js"></script>
+  <script src="javascripts/post_details.js"></script>
+</body>
+
+</html>

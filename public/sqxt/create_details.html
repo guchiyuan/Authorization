@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>需制作授权详细信息</title>
+  <link rel="stylesheet" href="libs/layui/css/layui.css">
+  <link rel="stylesheet" href="stylesheets/details.css">  
+</head>
+<style>
+
+</style>
+
+<body>
+  <div id="checkDetails-container"></div>
+
+  <div id="div-refuseShyj" style="display: none">
+    <!-- <form class="layui-form"> -->
+    <div class="layui-form-item" style="margin: 5%">
+      <label class="">
+        <span>审核意见</span>
+      </label>
+      <select class="layui-select select-refuseshyj" id="select-shyj" name="select-shyj" lay-verify="required" lay-filter="shyj-filter"
+        style="width: 50%">
+        <!-- <option selected="selected" disabled="disabled">请选择</option>
+          <option value="其它意见">其它意见</option> -->
+      </select>
+
+    </div>
+    <!-- </form> -->
+
+    <div class="layui-form-item refuseShyj" style="margin: 5%;">
+      <label class="">
+        <span>其它意见</span>
+      </label>
+      <textarea class="" name="input-refuseShyj" id="" cols="40" rows="5" style="width: 100%; margin-top: 10px">
+      </textarea>
+    </div>
+    <!-- </form> -->
+  </div>
+
+  <script id="checkDetails-tpl" type="text/x-tpl-handlebars">
+    <div class="container">
+      
+      <div class="layui-row" id="show-jfsy">
+        <div class="layui-col-xs12 content">
+          <span class="label layui-col-xs2">甲方使用：</span>
+          <span>{{jfsy}}</span>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs12 content">
+          <span class="label layui-col-xs2">软件名称：</span>
+          <span>{{cpmc}}</span>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">授权类型：</span>
+          <span>{{sqlx}}</span>
+        </div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">授权许可数：</span>
+          <span>{{sqxks}}</span>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">行政区代码：</span>
+          <span>{{xzqdm}}</span>
+        </div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">授权序列码：</span>
+          <span>{{sqxlm}}</span>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">申请数量：</span>
+          <span>{{sqsl}}</span>
+        </div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">加密狗：</span>
+          <span>{{jmg}}</span>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">项目截止时间：</span>
+          <span>{{xmjzsj}}</span>
+        </div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">授权截止时间：</span>
+          <span>{{jzsj}}</span>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">接收邮箱：</span>
+          <span>{{yxdz}}</span>
+        </div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">办理状态：</span>
+          <span>{{blzt}}</span>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">用户名：</span>
+          <span>{{yhm}}</span>
+        </div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">单位名称：</span>
+          <span>{{dwmc}}</span>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">联系电话：</span>
+          <span>{{lxdh}}</span>
+        </div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">商务联系人：</span>
+          <span>{{swlxr}}</span>
+        </div>
+      </div>
+
+
+
+      <div class="layui-row">
+        <div class="layui-col-xs12 content">
+          <span class="label layui-col-xs2">商务合同：</span>
+          <span>{{swhtmc}}</span>
+        </div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs12 content btn-group">
+          <button class="layui-btn layui-btn-xs btn-allow">制作完成</button>
+          <button class="layui-btn layui-btn-xs btn-refuse">不予办理</button>
+        </div>
+      </div>
+    </div>
+  </script>
+
+
+
+
+  <script src="javascripts/jquery-3.3.1.min.js"></script>
+  <script src="libs/handlebars/handlebars-v4.0.5.min.js"></script>
+  <script src="libs/layui/layui.js"></script>
+  <script src="javascripts/create_details.js"></script>
+</body>
+
+</html>

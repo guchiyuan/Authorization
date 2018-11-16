@@ -5,9 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var apisRouter=require('./routes/api');
+var indexRouter = require('./server/routes/index');
+// var apisRouter=require('./server/routes/api_重构之前');
+var wechatRouter=require('./server/routes/wechat');
+var commonRouter=require('./server/routes/common');
+var applyRouter=require('./server/routes/apply');
+var checkRouter=require('./server/routes/check');
+var adminRouter=require('./server/routes/admin');
 
 var app = express();
 
@@ -24,8 +28,17 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/api',apisRouter);
+app.use('/wechatsq',wechatRouter);
+app.use('/test',commonRouter);
+app.use('/test',applyRouter);
+app.use('/test',checkRouter);
+app.use('/test',adminRouter);
+
+//正式线上环境
+// app.use('/testapi',commonRouter);
+// app.use('/testapi',applyRouter);
+// app.use('/testapi',checkRouter);
+// app.use('/testapi',adminRouter);
 
 app.use(function(err,req,res,next){
   res.json(err.message);
@@ -46,8 +59,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-var orm=require('./models');
-
 
 module.exports = app;

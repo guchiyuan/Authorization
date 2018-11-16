@@ -1,0 +1,22 @@
+{
+  "code":"0000",
+  "data":[{
+    "index":"0001",
+    "cpdm":"401",
+    "cpmc":"不动产权籍",
+    "sfwh":"1",
+    "editing":false
+  },{
+    "index":"0002",    
+    "cpdm":"502",
+    "cpmc":"地籍系统",
+    "sfwh":"1",    
+    "editing":false
+  },{
+    "index":"0003", 
+    "cpdm":"603",
+    "cpmc":"农房软件",
+    "sfwh":"0",    
+    "editing":false
+  }]  
+}

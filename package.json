@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./index.js"
+    "start": "node ./index.js",
+    "dev": "nodemon ./index.js"
   },
   "dependencies": {
     "@alicloud/sms-sdk": "^1.1.1",
@@ -17,10 +18,13 @@
     "morgan": "~1.9.0",
     "mysql2": "^1.5.3",
     "nodemailer": "^4.6.4",
+    "redis": "^2.8.0",
     "request": "^2.85.0",
     "request-promise-native": "^1.0.5",
     "sequelize": "^4.37.6",
-    "uuid": "^3.2.1"
+    "sha1": "^1.1.1",
+    "uuid": "^3.2.1",
+    "wechat": "^2.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

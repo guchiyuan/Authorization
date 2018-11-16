@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>详细信息</title>
+  <link rel="stylesheet" href="libs/layui/css/layui.css">
+  <link rel="stylesheet" href="stylesheets/details.css">
+</head>
+<style>
+ 
+</style>
+
+<body>
+  <div id="historyDetails-container"></div>
+  <script id="historyDetails-tpl" type="text/x-tpl-handlebars">
+    <div class="container">
+      <div class="layui-row" id="show-jfsy">
+        <div class="layui-col-xs12 content">
+          <span class="label layui-col-xs2">甲方使用：</span>
+          {{jfsy}}
+        </div>
+      </div>
+
+      <div class="layui-row">
+          <div class="layui-col-xs12 content singlerow">
+            <span class="label layui-col-xs2">商务合同：</span>
+            {{swhtmc}}
+          </div>
+        </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs12 content">
+          <span class="label layui-col-xs2">产品名称：</span>
+          {{cpmc}}</div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">授权类型：</span>
+          {{sqlx}}</div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">授权许可数：</span>
+          {{sqxks}}</div>
+      </div>
+
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">加密狗：</span>
+          {{jmg}}</div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">申请数量：</span>
+          {{sqsl}}</div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">商务联系人：</span>
+          {{swlxr}}</div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">授权截止：</span>
+          {{jzsj}}</div>
+      </div>
+
+      <div class="layui-row">
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">行政区名称：</span>
+          {{xzqmc}}</div>
+        <div class="layui-col-xs6 content">
+          <span class="label layui-col-xs4">授权序列码：</span>
+          {{sqxlm}}</div>
+      </div>
+
+    </div>
+  </script>
+
+
+  <script src="javascripts/jquery-3.3.1.min.js"></script>
+  <script src="libs/handlebars/handlebars-v4.0.5.min.js"></script>
+  <script src="libs/layui/layui.js"></script>
+  <script src="javascripts/history_details.js"></script>
+</body>
+
+</html>
