@@ -89,7 +89,8 @@
       }
     });
 
-    $('#welcomeUser').click(function () {
+
+    function toggleUserInfoPanel() {
       if (flag === 0) {
         $('#user-info').hide();
         $('#content-apply').removeClass('layui-col-md9');
@@ -117,7 +118,14 @@
         $('#content-init').addClass('layui-col-md9');
         flag = 0;
       }
-    });
+    }
+
+    //关闭用户信息窗口
+    $('#btn-closeUserInfo').click(toggleUserInfoPanel)
+
+    $('#welcomeUser').click(toggleUserInfoPanel);
+
+
 
     if (roleInfo.role === '0') {
       $('#content-init').hide();
@@ -200,7 +208,7 @@
       getApplicationInfo();
     }
 
-
+    
 
 
     //-------------------------获取用户信息-----------------------------------------//
@@ -1794,7 +1802,8 @@
           field: 'cpmc',
           title: '软件名称',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: 400
         }, {
           field: 'sqlx',
           title: '授权类型',

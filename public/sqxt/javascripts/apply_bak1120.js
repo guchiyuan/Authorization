@@ -155,9 +155,6 @@ $(function () {
         $('#single-select-cpdm').val('');
         $('#single-select-cpdm').removeAttr('lay-verify');
         $('#div-multiselect-cpdm').show();
-        $('#multiselect-cpdm').siblings('.xm-select-parent').find('.xm-hide-input').attr({
-          'lay-verify': 'required'
-        });
 
         $('#select-xzqdmCity').val("");
         $('#select-xzqdmProvince').val("");
@@ -356,17 +353,12 @@ $(function () {
         formSelects.data('multiselect-cpdm', 'local', {
           arr: djrjDataOption
         });
-
-        $("[method|='反选']").hide();
-
       } else {
         console.log(otherrjDataOption);
 
         formSelects.data('multiselect-cpdm', 'local', {
           arr: otherrjDataOption
         });
-
-        $("[method|='反选']").hide();
       }
 
     })
@@ -551,8 +543,6 @@ $(function () {
       // var xzqdmProvinceAmount = $('#select-xzqdmProvince').val().length;
       var xzqdmProvince = $('#select-xzqdmProvince').val();
 
-      var loadCityData = [];
-
       if (xzqdmProvince) {
         var reqDataCity = {
           "xzqjb": "2",
@@ -578,6 +568,7 @@ $(function () {
 
           }
         });
+
       } else {
         $('#select-xzqdmCity').empty();
         $('#select-xzqdmCity').next().hide();
@@ -591,10 +582,10 @@ $(function () {
       var jfsy = $('input[name="jfsy"]:checked').val();
       if (sfnb === '0' || jfsy === '1') {
         $('#select-xzqdmDistrict').next().show();
-        // reqDataDistrict = {
-        //   "xzqjb": "3",
-        //   "xzqdm": $('#select-xzqdmCity').val()
-        // };
+        reqDataDistrict = {
+          "xzqjb": "3",
+          "xzqdm": $('#select-xzqdmCity').val()
+        };
 
         var reqSwlxrData = {
           xzqdm: $('#select-xzqdmCity').val()
@@ -613,124 +604,42 @@ $(function () {
         var xzqdmCityAmount = $('#select-xzqdmCity').val().length;
         console.log(xzqdmCityAmount);
 
-        // if (xzqdmCityAmount === 1) {
-        //   // $('#select-xzqdmDistrict').next().show();
-        //   reqDataDistrict = {
-        //     "xzqjb": "3",
-        //     "xzqdm": $('#select-xzqdmCity').val()[0]
-        //   };
-        // } else {
-        //   // $('#select-xzqdmDistrict').next().hide();
-        //   reqDataDistrict = {
-        //     "xzqjb": "3",
-        //     "xzqdm": "000000"
-        //   };
-        // }
-      }
-
-      var cityNameArray = [];
-      $('#select-xzqdmCity').siblings('.layui-form-select').find('.layui-form-checked').find('span').each(function () {
-        cityNameArray.push($(this).text());
-      });
-
-      var cityXzqdm = $('#select-xzqdmCity').val();
-      var loadDistrictData = [];
-      console.log(cityXzqdm);
-
-      if (typeof cityXzqdm == 'string') {
-        $.ajax({
-          type: "GET",
-          url: "/test/xzqdm",
-          async: false,
-          data: {
-            'xzqjb': 3,
-            'xzqdm': cityXzqdm
-          },
-          dataType: "json",
-          success: function (res) {
-            console.log(res);
-            var resultDistrictData = res.map(function (item) {
-              return {
-                name: item.mc,
-                value: item.dm
-              }
-            });
-            loadDistrictData = loadDistrictData.concat(resultDistrictData);
-          },
-          error: function (err) {
-            console.log(err);
-          }
-        });
-      } else {
-        for (let i = 0; i < cityXzqdm.length; i++) {
-          let cityCode = cityXzqdm[i];
-          let cityName = cityNameArray[i];
-          $.ajax({
-            type: "GET",
-            url: "/test/xzqdm",
-            async: false,
-            data: {
-              'xzqjb': 3,
-              'xzqdm': cityCode
-            },
-            dataType: "json",
-            success: function (res) {
-              console.log(res);
-              var resultDistrictData = res.map(function (item) {
-                return {
-                  name: item.mc,
-                  value: item.dm
-                }
-              });
-              resultDistrictData.unshift({
-                name: cityName,
-                type: 'optgroup'
-              });
-              loadDistrictData = loadDistrictData.concat(resultDistrictData);
-            },
-            error: function (err) {
-              console.log(err);
-
-            }
-          });
+        if (xzqdmCityAmount === 1) {
+          // $('#select-xzqdmDistrict').next().show();
+          reqDataDistrict = {
+            "xzqjb": "3",
+            "xzqdm": $('#select-xzqdmCity').val()[0]
+          };
+        } else {
+          // $('#select-xzqdmDistrict').next().hide();
+          reqDataDistrict = {
+            "xzqjb": "3",
+            "xzqdm": "000000"
+          };
         }
       }
 
-      console.log(loadDistrictData);
+      $.ajax({
+        type: "GET",
+        url: "/test/xzqdm",
+        // async: false,
+        data: reqDataDistrict,
+        dataType: "json",
+        async: false,
+        success: function (res) {
+          districtData = res;
+          loadSelectOptionsXzqdm($('#select-xzqdmDistrict'), districtData);
+          // form.render();
+          form.render(null, 'xzqdm-filter');
+          if (xzqdmCityAmount > 1 || xzqdmCityAmount === 0) {
+            $('#select-xzqdmDistrict').next().hide();
+          }
+        },
+        error: function (err) {
+          console.log(err);
 
-      formSelects.data('multiselect-district', 'local', {
-        arr: loadDistrictData
+        }
       });
-
-      $('#select-xzqdmDistrict').next().show();
-
-      // loadMultiSelectOptionsXzqdm($('#select-xzqdmDistrict'), loadData);
-      // form.render(null, 'xzqdm-filter');
-      if (xzqdmCityAmount === 0) {
-        $('#select-xzqdmDistrict').next().hide();
-      }
-
-      // $.ajax({
-      //   type: "GET",
-      //   url: "/test/xzqdm",
-      //   // async: false,
-      //   data: reqDataDistrict,
-      //   dataType: "json",
-      //   async: false,
-      //   success: function (res) {
-      //     districtData = res;
-      //     loadSelectOptionsXzqdm($('#select-xzqdmDistrict'), districtData);
-      //     // form.render();
-      //     form.render(null, 'xzqdm-filter');
-      //     if (xzqdmCityAmount > 1 || xzqdmCityAmount === 0) {
-      //       $('#select-xzqdmDistrict').next().hide();
-      //     }
-      //   },
-      //   error: function (err) {
-      //     console.log(err);
-
-      //   }
-      // });
     })
 
 
@@ -773,29 +682,6 @@ $(function () {
         option: options
       });
       $selector.html(rendered);
-
-      // if (data[0].dm.slice(-2) !== '00') {
-      //   $selector.append(rendered);        
-      // } else {
-      //   $selector.html(rendered);
-      // }
-    }
-
-    function loadMultiSelectOptionsXzqdm($selector, data) {
-      $selector.html('');
-      var options = [];
-      $.each(data, function (idx, obj) {
-        options.push({
-          mc: obj.mc,
-          dm: obj.dm
-        });
-      });
-
-      var tpl = $("#select-tpl").html();
-      var rendered = RenderData(tpl, {
-        option: options
-      });
-      $selector.append(rendered);
     }
 
     function loadSelectOptionsSwlxr($selector, data) {
@@ -835,7 +721,7 @@ $(function () {
     };
 
 
-    $('#btn-delete').click(function () {
+    $('#btn-delete').click(function () { 
       var value = $('#input-sqxlm').val();
 
       console.log(value);
@@ -858,7 +744,7 @@ $(function () {
       //   sqxlmsArray = [];
       //   fileDatArr = [];
       // }
-
+      
       // if (value.indexOf(',') > -1) {
       //   value = value.replace(/.*?\,/, '');
       // } else {
@@ -989,23 +875,23 @@ $(function () {
 
         var jfsy = $('input[name="jfsy"]:checked').val();
         //测试默认320101
-        console.log('是否甲方使用', jfsy);
-        console.log('是否内部使用', sfnb);
-
+        console.log('是否甲方使用',jfsy);
+        console.log('是否内部使用',sfnb);
+        
         if (sfnb === '1' && jfsy === '0') {
+          console.log($('#select-xzqdmDistrict').val());
           console.log($('#select-xzqdmCity').val());
-          if (formSelects.value('multiselect-district', 'valStr')) {
-            // reqDataApplication.xzqdm = $('#select-xzqdmDistrict').val().join(',');
-            reqDataApplication.xzqdm = formSelects.value('multiselect-district', 'valStr');
+          
+          if ($('#select-xzqdmDistrict').val().length !== 0 && $('#select-xzqdmDistrict').val()[0] !== '') {
+            reqDataApplication.xzqdm = $('#select-xzqdmDistrict').val().join(',');
           } else if ($('#select-xzqdmCity').val().length !== 0 && $('#select-xzqdmCity').val()[0] !== '') {
             reqDataApplication.xzqdm = $('#select-xzqdmCity').val().join(',');
-          } else {
+          } else {            
             reqDataApplication.xzqdm = $('#select-xzqdmProvince').val();
           }
         } else {
-          if (formSelects.value('multiselect-district', 'valStr')) {
-            reqDataApplication.xzqdm = formSelects.value('multiselect-district', 'valStr');
-            // reqDataApplication.xzqdm = $('#select-xzqdmDistrict').val().join(',');
+          if ($('#select-xzqdmDistrict').val().length !== 0 && $('#select-xzqdmDistrict').val()[0] !== '') {
+            reqDataApplication.xzqdm = $('#select-xzqdmDistrict').val().join(',');
             // reqDataApplication.xzqdm = $('#select-xzqdmCity').val(); //选择区县直接跳转给上一级市            
           } else if ($('#select-xzqdmCity').val().length !== 0 && $('#select-xzqdmCity').val()[0] !== '') {
             reqDataApplication.xzqdm = $('#select-xzqdmCity').val();

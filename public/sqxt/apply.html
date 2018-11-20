@@ -71,7 +71,8 @@
         <label class="layui-form-label" for="select-cpdm">
           <span class="required-mark">* </span>软件产品</label>
         <div class="layui-form layui-input-block" lay-filter="div-multi-cpdm-filter" id="div-multiselect-cpdm">
-          <select class="layui-form" id="multiselect-cpdm" name="multiselect-cpdm" xm-select="multiselect-cpdm" lay-verify="required">
+          <select class="layui-form" id="multiselect-cpdm" name="multiselect-cpdm" xm-select="multiselect-cpdm"
+            lay-verify="required">
             <option value="">请选择</option>
           </select>
         </div>
@@ -93,7 +94,11 @@
           <select class="layui-form" id="select-xzqdmCity" name="select-xzqdmCity" multiple lay-verify="" lay-filter="xzqdmCity-filter">
             <option value=""></option>
           </select>
-          <select class="layui-form" id="select-xzqdmDistrict" name="select-xzqdmDistrict" lay-verify="" multiple
+          <!-- <select class="layui-form" id="select-xzqdmDistrict" name="select-xzqdmDistrict" lay-verify="" multiple
+            lay-filter="xzqdmDistrict-filter">
+            <option value=""></option>
+          </select> -->
+          <select class="layui-form" id="select-xzqdmDistrict" name="select-xzqdmDistrict" lay-verify="" xm-select="multiselect-district"
             lay-filter="xzqdmDistrict-filter">
             <option value=""></option>
           </select>
@@ -277,10 +282,9 @@
 
   </div>
 
-
   <script id="select-tpl" type="text/x-tpl-handlebars">
     {{#option}}
-    <option value="{{dm}}">{{mc}}</option>
+        <option value="{{dm}}">{{mc}}</option>
     {{/option}}
   </script>
 

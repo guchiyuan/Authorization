@@ -9,6 +9,8 @@ const uuidv1 = require('uuid/v1');
 var requester = require('request-promise-native');
 var redis = require('redis');
 var sha1 = require('sha1');
+var ADDRESS_GETOPENID = config.getWechatOpenidAddress;
+
 
 // 捕获异步函数中的错误，利用next(err)传给错误处理中间件
 function catchAsyncErrors(fn) {

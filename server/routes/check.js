@@ -320,7 +320,7 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
         let responseObj = results.map(result => {
           let sqxlmArr = [];
           let sqxlmStr;
-          
+
           if (result.SQXLM.slice(0, 1) == '[') {
             let sqxlmObjArr = JSON.parse(result.SQXLM);
             for (let i = 0; i < sqxlmObjArr.length; i++) {
@@ -687,12 +687,36 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
           }
         });
         rows = rows + count[0];
-        // let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0" && item.CPDM != '10' && item.CPDM != '100' && item.CPDM != '111' && item.CPDM != '302');
-        // let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0" && !(item.CPDM.indexOf('100') != -1 || item.CPDM.indexOf('111') != -1 || item.CPDM.indexOf('302') != -1|| item.CPDM.indexOf('10') != -1));
-        let rows_make = rows_update.filter(item => {
+        // // let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0" && item.CPDM != '10' && item.CPDM != '100' && item.CPDM != '111' && item.CPDM != '302');
+        // // let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0" && !(item.CPDM.indexOf('100') != -1 || item.CPDM.indexOf('111') != -1 || item.CPDM.indexOf('302') != -1|| item.CPDM.indexOf('10') != -1));
+        // let rows_make = rows_update.filter(async item => {
+        //   let cpdmArr = item.CPDM.split(',');
+        //   let cplx = await orm.option.CPLX.findOne({
+        //     where: {
+        //       CPDM: cpdmArr[0]
+        //     }
+        //   });
+        //   console.log('到这里了',cplx.SFDJ);
+        //   // return item.SQLX == "1" && item.SFJMG == "0" && !cpdmArr.includes('100') && !cpdmArr.includes('111') && !cpdmArr.includes('10') && !cpdmArr.includes('302')
+        //   return item.SQLX == "1" && item.SFJMG == "0" && cplx.SFDJ == '0'
+        // });
+
+        let rows_make = [];
+
+        for (let i = 0; i < rows_update.length; i++) {
+          let item = rows_update[i];
           let cpdmArr = item.CPDM.split(',');
-          return item.SQLX == "1" && item.SFJMG == "0" && !cpdmArr.includes('100') && !cpdmArr.includes('111') && !cpdmArr.includes('10') && !cpdmArr.includes('302')
-        });
+          let cplx = await orm.option.CPLX.findOne({
+            where: {
+              CPDM: cpdmArr[0]
+            }
+          });
+          if (item.SQLX == "1" && item.SFJMG == "0" && cplx.SFDJ == '0') {
+            rows_make.push(item);
+          }
+        }
+        console.log('自动制作授权的申请', rows_make);
+
         MakeAuthority(rows_make.map(item => item.INDEX));
         if (blzt === '2') {
           if (!openid) {
@@ -743,7 +767,18 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
           }
         });
         rows = rows + count[0];
-        let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0" && item.CPDM != '10' && item.CPDM != '100' && item.CPDM != '111' && item.CPDM != '302');
+        // let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0" && item.CPDM != '10' && item.CPDM != '100' && item.CPDM != '111' && item.CPDM != '302');
+        let rows_make = rows_update.filter(async item => {
+          let cpdmArr = item.CPDM.split(',');
+          let cplx = await orm.option.CPLX.findOne({
+            where: {
+              CPDM: cpdmArr[0]
+            }
+          });
+          console.log(cplx);
+          // return item.SQLX == "1" && item.SFJMG == "0" && !cpdmArr.includes('100') && !cpdmArr.includes('111') && !cpdmArr.includes('10') && !cpdmArr.includes('302')
+          return item.SQLX == "1" && item.SFJMG == "0" && cplx.SFDJ == '0'
+        });
         MakeAuthority(rows_make.map(item => item.INDEX));
         if (blzt === '3') {
           if (!openid) {
@@ -1342,14 +1377,23 @@ router.post('/check_batch_applications', catchAsyncErrors(async (req, res) => {
           BLZT: "2"
         }
       });
-      // let rows = 0;
-      // rows = rows + count[0];
-      // let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0" && item.CPDM != '10' && item.CPDM != '100' && item.CPDM != '111' && item.CPDM != '302');
-      // let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0" && !(item.CPDM.indexOf('100') != -1 || item.CPDM.indexOf('111') != -1 || item.CPDM.indexOf('302') != -1|| item.CPDM.indexOf('10') != -1));
-      let rows_make = rows_update.filter(item => {
+
+      let rows_make = [];
+
+      for (let i = 0; i < rows_update.length; i++) {
+        let item = rows_update[i];
         let cpdmArr = item.CPDM.split(',');
-        return item.SQLX == "1" && item.SFJMG == "0" && !cpdmArr.includes('100') && !cpdmArr.includes('111') && !cpdmArr.includes('10') && !cpdmArr.includes('302')
-      });
+        let cplx = await orm.option.CPLX.findOne({
+          where: {
+            CPDM: cpdmArr[0]
+          }
+        });
+        if (item.SQLX == "1" && item.SFJMG == "0" && cplx.SFDJ == '0') {
+          rows_make.push(item);
+        }
+      }
+      console.log('自动制作授权的申请', rows_make);
+
       MakeAuthority(rows_make.map(item => item.INDEX));
       for (let i = 0; i < contacts.length; i++) {
         if (!contacts[i].openid) {
