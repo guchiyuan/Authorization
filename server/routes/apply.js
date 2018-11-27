@@ -13,7 +13,8 @@ var requester = require('request-promise-native');
 
 var request = require('request');
 
-var wechatOper = require('../common_function/WechatOperation')
+var wechatOper = require('../common_function/WechatOperation');
+var crypto = require('crypto');
 
 var ADDRESS_ACCESSTOKEN = config.getAccessTokenAddress;
 
@@ -492,6 +493,38 @@ router.post('/revokeApplication', catchAsyncErrors(async (req, res, next) => {
 
 }));
 
+// var des = {
+//     algorithm: {
+//         ecb: 'des-ecb',
+//         cbc: 'des-cbc'
+//     },
+//     key: '21003600',
+//     // key: 'JONATHAN',
+//     encrypt: function (plaintext, iv) {
+//         var key = new Buffer(this.key);
+//         var iv = new Buffer(iv ? iv : 0);
+//         var cipher = crypto.createCipheriv(this.algorithm.cbc, key, iv);
+//         cipher.setAutoPadding(true) //default true
+//         var ciph = cipher.update(plaintext, 'utf8', 'base64');
+//         ciph += cipher.final('base64');
+//         return ciph;
+//     },
+//     decrypt: function (encrypt_text, iv) {
+//         var key = new Buffer(this.key);
+//         var iv = new Buffer(iv ? iv : 8);
+//         var decipher = crypto.createDecipheriv(this.algorithm.cbc, key, iv);
+//         decipher.setAutoPadding(true);
+//         var txt = decipher.update(encrypt_text, 'base64', 'utf8');
+//         txt += decipher.final('utf8');
+//         return txt;
+//     }
+// };
+// // let text = des.decrypt('Ju4wLGeGXA==');
+// let iv = [0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF];
+// let text = des.decrypt('kO4FtoCaySBB2irlgTuAsQ==', iv);
+// console.log(text.indexOf('�'), text);
+// console.log('怎么搞啊！');
+
 //// 提交申请
 router.post('/submitApplication', catchAsyncErrors(async (req, res, next) => {
     let reqParams = req.body;
@@ -555,7 +588,66 @@ router.post('/submitApplication', catchAsyncErrors(async (req, res, next) => {
         // throw new AppCommonError("您上传的文件中混有lic文件，请不要上传lic文件", "0001");
         throw new AppCommonError("上传的授权序列码有误，请重新导出", "0001");
     }
-    
+
+
+    var des = {
+        algorithm: {
+            ecb: 'des-ecb',
+            cbc: 'des-cbc'
+        },
+        decrypt: function (encrypt_text, iv) {
+            var key = new Buffer(this.key);
+            var iv = new Buffer(iv ? iv : 8);
+            var decipher = crypto.createDecipheriv(this.algorithm.cbc, key, iv);
+            decipher.setAutoPadding(true);
+            var txt = decipher.update(encrypt_text, 'base64', 'utf8');
+            txt += decipher.final('utf8');
+            return txt;
+        }
+    };
+
+    let cpdmArr = reqParams.cpdm.split(',');
+    let cplxResult = await orm.option.CPLX.findOne({
+        where: {
+            DM: cpdmArr[0]
+        }
+    });
+
+    let sqxlmObj;
+    if (reqParams.sqxlm.slice(0, 1) == '[') {
+        sqxlmObj = JSON.parse(reqParams.sqxlm);
+        if (cplxResult.SFDJ === '1') {
+            des.key = '21003600';
+            try {
+                sqxlmObj.forEach(item => {
+                    let iv = [0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF];
+                    let text = des.decrypt(item.value, iv);
+                    if (text.indexOf('�') === -1) {
+                        throw new AppCommonError("请上传地籍dat文件，不要上传非地籍dat", "0002");
+                    }
+                })
+            } catch (error) {
+                if (error.code == '0002') {
+                    throw new AppCommonError("请上传地籍dat文件，不要上传非地籍dat", "0002");
+                }
+            }
+        } else {
+            des.key = '21003600';
+            try {
+                sqxlmObj.forEach(item => {
+                    let iv = [0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF];
+                    let text = des.decrypt(item.value, iv);               
+                    if (text.indexOf('�') > -1) {
+                        throw new AppCommonError("上传的授权序列码有误，请重新导出", "0001");
+                    }
+                })
+            } catch (error) {
+                throw new AppCommonError("上传的授权序列码有误，请重新导出", "0001");
+            }
+        }
+    }
+
+
 
 
     let userInfo = await orm.CustomerInfo.findOne({
