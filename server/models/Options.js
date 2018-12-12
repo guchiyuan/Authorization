@@ -16,6 +16,7 @@ module.exports = function (sequlize, dataTypes) {
         , MC: { type: dataTypes.STRING, field: "CPMC" }
         , SFWH: { type: dataTypes.STRING, field: "SFWH" }        
         , SFDJ: { type: dataTypes.STRING, field: "SFDJ" }        
+        , SFFS: { type: dataTypes.STRING, field: "SFFS" }        
         , INDEX: { type: dataTypes.STRING, primaryKey: true, field: "CPLX_INDEX" }
     }, {
             freezeTableName: true

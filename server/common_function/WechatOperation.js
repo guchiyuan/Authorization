@@ -46,11 +46,31 @@ module.exports = {
         }
       } else if (blzt == '3') {
         if (tg === true) {
+          templateData.keyword2.value = "复审通过";
+          templateData.keyword3.value = "无";
+          templateData.remark.value = "请耐心等待核定";
+        } else {
+          templateData.keyword2.value = "申请被复审拒绝";
+          templateData.keyword3.value = shyj;
+          templateData.remark.value = "如有疑问，请联系我司相关工作人员。";
+        }
+      } else if (blzt == '3a') {
+        if (tg === true) {
+          templateData.keyword2.value = "初审通过";
+          templateData.keyword3.value = "无";
+          templateData.remark.value = "请耐心等待核定";
+        } else {
+          templateData.keyword2.value = "申请被初审拒绝";
+          templateData.keyword3.value = shyj;
+          templateData.remark.value = "如有疑问，请联系我司相关工作人员。";
+        }
+      } else if (blzt == '4') {
+        if (tg === true) {
           templateData.keyword2.value = "审核通过";
           templateData.keyword3.value = "无";
           templateData.remark.value = "请耐心等待制作授权,注意查收邮箱（加密狗授权除外）!";
         } else {
-          templateData.keyword2.value = "申请被复审拒绝";
+          templateData.keyword2.value = "申请被核定人拒绝";
           templateData.keyword3.value = shyj;
           templateData.remark.value = "如有疑问，请联系我司相关工作人员。";
         }
@@ -180,8 +200,8 @@ module.exports = {
         "value": "",
         "color": "#173177"
       },
-       //----------------------服务号模板-----------------------//
-       "keyword1": {
+      //----------------------服务号模板-----------------------//
+      "keyword1": {
         "value": "国图软件授权管理系统",
         "color": "#173177"
       },

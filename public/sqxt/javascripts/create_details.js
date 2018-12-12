@@ -101,6 +101,8 @@ $(function () {
       break;
   }
 
+  details.sqxlm = details.sqxlm.replace(/,/g, '<br>')
+
   var tpl = $("#checkDetails-tpl").html();
   //预编译模板
   var template = Handlebars.compile(tpl);
@@ -108,6 +110,8 @@ $(function () {
   var content = template(details);
   //输入模板
   $("#checkDetails-container").html(content);
+
+  $('#sqxlm').html(details.sqxlm);
 
   if (details.swhtmc !== '无') {
     $('#show-jfsy').hide();

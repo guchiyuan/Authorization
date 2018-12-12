@@ -113,7 +113,8 @@ router.get('/unchecked_users', catchAsyncErrors(async (req, res, next) => {
         rzzt: u.ZT,
         wechat: u.WECHAT,
         index: u.INDEX,
-        sfgzgzh: u.OPENID ? "是" : "否"
+        sfgzgzh: u.OPENID ? "是" : "否",
+        remark: u.REMARK ? u.REMARK : '无'
       }
     });
     if (!responseObjects || responseObjects.length == 0) {
@@ -127,9 +128,16 @@ router.get('/unchecked_users', catchAsyncErrors(async (req, res, next) => {
       });
       customerSearchCondition.push("1");
     }
-    if (userQx.indexOf("4") > -1) {
+    // if (userQx.indexOf("4") > -1) {
+    //   recordSearchCondition.push({
+    //     FSR: payload.jsIndex
+    //   });
+    //   customerSearchCondition.push("2");
+    // }
+
+    if (userQx.indexOf("5") > -1) {
       recordSearchCondition.push({
-        FSR: payload.jsIndex
+        HDR: payload.jsIndex
       });
       customerSearchCondition.push("2");
     }
@@ -168,7 +176,7 @@ router.get('/unchecked_users', catchAsyncErrors(async (req, res, next) => {
 
     let userApplication2 = await orm.ApplicationRecord.findAll({
       where: {
-        FSR: payload.jsIndex
+        HDR: payload.jsIndex
       },
       attributes: ['XMDDM']
     });
@@ -194,7 +202,8 @@ router.get('/unchecked_users', catchAsyncErrors(async (req, res, next) => {
         rzzt: u.ZT,
         wechat: u.WECHAT,
         index: u.INDEX,
-        sfgzgzh: u.OPENID ? "是" : "否"
+        sfgzgzh: u.OPENID ? "是" : "否",
+        remark: u.REMARK ? u.REMARK : '无'
       }
     });
     if (!responseObjects || responseObjects.length == 0) {
@@ -284,7 +293,8 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
         index: u.INDEX,
         yhrzxxIndex: u.YHRZXX_INDEX,
         cpdm: u.CPDM,
-        sqsj: u.SQSJ
+        sqsj: u.SQSJ,
+        remark: u.REMARK ? u.REMARK : '无'
       }
     });
 
@@ -307,13 +317,21 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
       applicationSearchCondition.push("3");
     }
 
+    if (userQx.indexOf("5") > -1) {
+      recordSearchCondition.push({
+        HDR: payload.jsIndex
+      });
+      applicationSearchCondition.push("3");
+      applicationSearchCondition.push("4");
+    }
+
     if (recordSearchCondition.length == 0) {
       throw new AppCommonError("当前用户无审核权限", "20021");
     }
 
 
     let uncheckedApplications = [];
-    orm.sequelize.query("SELECT a.JZSJ as XMJZSJ,b.*,c.YHM,c.LXDH,c.YHDW,c.SFNBCY,c.YXDZ FROM s_sj_sqdj a,s_sj_sqxx b,s_sj_yhrzxx c WHERE a.XMDDM=b.XMDDM and a.CPDM=b.CPDM and c.YHRZXX_INDEX=b.YHRZXX_INDEX and ((a.CSR=\'" + payload.jsIndex + "\'and b.BLZT='2') or (a.FSR=\'" + payload.jsIndex + "\'and b.BLZT='3')) group by b.SQXX_INDEX", {
+    orm.sequelize.query("SELECT a.JZSJ as XMJZSJ,b.*,c.YHM,c.LXDH,c.YHDW,c.SFNBCY,c.YXDZ FROM s_sj_sqdj a,s_sj_sqxx b,s_sj_yhrzxx c,s_zd_cplx d WHERE a.XMDDM=b.XMDDM and a.CPDM=b.CPDM and c.YHRZXX_INDEX=b.YHRZXX_INDEX and b.CPDM = d.CPDM and ((a.CSR=\'" + payload.jsIndex + "\'and b.BLZT='2') or (a.FSR=\'" + payload.jsIndex + "\'and b.BLZT='3') or (a.HDR=\'" + payload.jsIndex + "\'and b.BLZT='4') or (a.HDR=\'" + payload.jsIndex + "\'and b.BLZT='3' and d.SFFS = '0' )) group by b.SQXX_INDEX", {
         type: orm.sequelize.QueryTypes.SELECT
       })
       .then(results => {
@@ -353,25 +371,34 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
             sfnbcy: result.SFNBCY,
             yhrzxxIndex: result.YHRZXX_INDEX,
             cpdm: result.CPDM,
-            sqsj: result.SQSJ
+            sqsj: result.SQSJ,
+            remark: result.REMARK ? result.REMARK : '无'
           }
         })
 
-        for (let i = 0; i < applicationSearchCondition.length; i++) {
-          const blzt = applicationSearchCondition[i];
-          responseObj.forEach(item => {
-            if (item.blzt === blzt) {
-              uncheckedApplications.push(item)
-            }
-          });
-        }
 
         // 选出甲方用户申请或者内部成员为甲方申请的信息
-        uncheckedApplications = uncheckedApplications.filter(item =>
+        responseObj = responseObj.filter(item =>
           item.sfnbcy == "0" || (item.sfnbcy == "1" && item.jfsy == '1'));
 
 
-        return res.json(uncheckedApplications);
+        return res.json(responseObj);
+
+        // for (let i = 0; i < applicationSearchCondition.length; i++) {
+        //   const blzt = applicationSearchCondition[i];
+        //   responseObj.forEach(item => {
+        //     if (item.blzt === blzt) {
+        //       uncheckedApplications.push(item)
+        //     }
+        //   });
+        // }
+
+        // // 选出甲方用户申请或者内部成员为甲方申请的信息
+        // uncheckedApplications = uncheckedApplications.filter(item =>
+        //   item.sfnbcy == "0" || (item.sfnbcy == "1" && item.jfsy == '1'));
+
+
+        // return res.json(uncheckedApplications);
 
       })
   }
@@ -469,7 +496,7 @@ router.post('/checked_users', catchAsyncErrors(async (req, res) => {
     });
 
   } else {
-    if (userQx.indexOf("4") > -1) {
+    if (userQx.indexOf("5") > -1) {
       if (tg) {
         let count = await orm.CustomerInfo.findAll({
           where: {
@@ -708,7 +735,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
           let cpdmArr = item.CPDM.split(',');
           let cplx = await orm.option.CPLX.findOne({
             where: {
-              CPDM: cpdmArr[0]
+              DM: cpdmArr[0]
             }
           });
           if (item.SQLX == "1" && item.SFJMG == "0" && cplx.SFDJ == '0') {
@@ -751,9 +778,10 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
     }
   }
 
-  //// 复审
-  if (userQx.indexOf("4") > -1) {
-    let rows_update = rows_submit.filter(item => item.BLZT == "3");
+
+  //// 核定
+  if (userQx.indexOf("5") > -1) {
+    let rows_update = rows_submit;
     if (rows_update && rows_update.length != 0) {
       if (tg) {
         let count = await orm.ApplicationInfo.update({
@@ -763,29 +791,113 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
             INDEX: {
               [orm.Sequelize.Op.in]: indexes_update
             },
-            BLZT: "3"
+            // BLZT: "3",
           }
         });
+
         rows = rows + count[0];
-        // let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0" && item.CPDM != '10' && item.CPDM != '100' && item.CPDM != '111' && item.CPDM != '302');
-        let rows_make = rows_update.filter(async item => {
+        // // let rows_make = rows_update.filter(item => item.SQLX == "1" && item.SFJMG == "0" && item.CPDM != '10' && item.CPDM != '100' && item.CPDM != '111' && item.CPDM != '302');
+        // let rows_make = rows_update.filter(async item => {
+        //   let cpdmArr = item.CPDM.split(',');
+        //   let cplx = await orm.option.CPLX.findOne({
+        //     where: {
+        //       CPDM: cpdmArr[0]
+        //     }
+        //   });
+        //   console.log(cplx);
+        //   // return item.SQLX == "1" && item.SFJMG == "0" && !cpdmArr.includes('100') && !cpdmArr.includes('111') && !cpdmArr.includes('10') && !cpdmArr.includes('302')
+        //   return item.SQLX == "1" && item.SFJMG == "0" && cplx.SFDJ == '0'
+        // });
+
+        let rows_make = [];
+
+        for (let i = 0; i < rows_update.length; i++) {
+          let item = rows_update[i];
           let cpdmArr = item.CPDM.split(',');
           let cplx = await orm.option.CPLX.findOne({
             where: {
-              CPDM: cpdmArr[0]
+              DM: cpdmArr[0]
             }
           });
-          console.log(cplx);
-          // return item.SQLX == "1" && item.SFJMG == "0" && !cpdmArr.includes('100') && !cpdmArr.includes('111') && !cpdmArr.includes('10') && !cpdmArr.includes('302')
-          return item.SQLX == "1" && item.SFJMG == "0" && cplx.SFDJ == '0'
-        });
+          if (item.SQLX == "1" && item.SFJMG == "0" && cplx.SFDJ == '0') {
+            rows_make.push(item);
+          }
+        }
+        console.log('自动制作授权的申请', rows_make);
+
         MakeAuthority(rows_make.map(item => item.INDEX));
+        // if (blzt === '3') {
+        if (!openid) {
+          await authOper.sendMessage(lxdh, config.allow_application_sendMessage_3);
+        } else {
+          await wechatOper.sendTemplateMessage(openid, body.access_token, '4', tg, req.body.shyj, "申请审核");
+        }
+        // }
+      } else {
+        let count = await orm.ApplicationInfo.update({
+          BLZT: "9",
+          BZ: `{"shyj":"${req.body.shyj}","shzt":"核定"}`
+        }, {
+          where: {
+            INDEX: {
+              [orm.Sequelize.Op.in]: indexes_update
+            },
+            // BLZT: "3"
+          }
+        });
+        rows = rows + count[0];
+        // if (blzt === '3') {
+        if (!openid) {
+          await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_3 + '，拒绝理由：' + req.body.shyj + ')');
+        } else {
+          await wechatOper.sendTemplateMessage(openid, body.access_token, '4', tg, req.body.shyj, "申请审核");
+        }
+        // }
+      }
+    }
+  }
+  
+  //// 复审
+  if (userQx.indexOf("4") > -1) {
+    //// 甲方申请或者内部帮甲方申请的都要走初审复审模式
+    let rows_update = rows_submit.filter(item => item.BLZT == "3" &&
+      (item.Customers.SFNBCY == "0" || (item.Customers.SFNBCY == "1" && item.JFSY == "1")));
+    if (rows_update && rows_update.length != 0) {
+      if (tg) {    
+        let count = await orm.ApplicationInfo.update({
+          BLZT: "4"
+        }, {
+          where: {
+            INDEX: {
+              [orm.Sequelize.Op.in]: indexes_update
+            },
+            // BLZT: "3"
+          }
+        });
+        rows = rows + count[0];
         if (blzt === '3') {
           if (!openid) {
-            await authOper.sendMessage(lxdh, config.allow_application_sendMessage_3);
+            await authOper.sendMessage(lxdh, config.allow_application_sendMessage_1);
+
           } else {
             await wechatOper.sendTemplateMessage(openid, body.access_token, blzt, tg, req.body.shyj, "申请审核");
           }
+
+          let djxx = await orm.ApplicationRecord.findOne({
+            where: {
+              CPDM: req.body.cpdm,
+              XMDDM: req.body.xmddm
+            },
+            include: [{
+              model: orm.User,
+              as: "Hdr"
+            }]
+          });
+
+          let openid_jscy = djxx.Hdr.OPENID;
+
+          await wechatOper.remindCheckMessage(openid_jscy, body.access_token, blzt);
+
         }
       } else {
         let count = await orm.ApplicationInfo.update({
@@ -802,7 +914,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
         rows = rows + count[0];
         if (blzt === '3') {
           if (!openid) {
-            await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_3 + '，拒绝理由：' + req.body.shyj + ')');
+            await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_1 + '，拒绝理由：' + req.body.shyj + ')');
           } else {
             await wechatOper.sendTemplateMessage(openid, body.access_token, blzt, tg, req.body.shyj, "申请审核");
           }
@@ -810,6 +922,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
       }
     }
   }
+
 
   //// 初审
   if (userQx.indexOf("3") > -1) {
@@ -828,8 +941,20 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
             BLZT: "2"
           }
         });
-        rows = rows + count[0];
-        if (blzt === '2') {
+
+        let result = await orm.ApplicationInfo.findOne({
+          where: {
+            INDEX: {
+              [orm.Sequelize.Op.in]: indexes_update
+            }
+          },
+          include: [{
+            model: orm.option.CPLX,
+            as: "Cplx"
+          }]
+        });
+
+        if (result.Cplx.SFFS === '1') {
           if (!openid) {
             await authOper.sendMessage(lxdh, config.allow_application_sendMessage_1);
 
@@ -849,13 +974,33 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
             }]
           });
 
-          console.log(djxx);
-
           let openid_jscy = djxx.Fsr.OPENID;
 
           await wechatOper.remindCheckMessage(openid_jscy, body.access_token, blzt);
+        } else {
+          if (!openid) {
+            await authOper.sendMessage(lxdh, config.allow_application_sendMessage_1);
 
+          } else {
+            await wechatOper.sendTemplateMessage(openid, body.access_token, '3a', tg, req.body.shyj, "申请审核");
+          }
+
+          let djxx = await orm.ApplicationRecord.findOne({
+            where: {
+              CPDM: req.body.cpdm,
+              XMDDM: req.body.xmddm
+            },
+            include: [{
+              model: orm.User,
+              as: "Hdr"
+            }]
+          });
+
+          let openid_jscy = djxx.Hdr.OPENID;
+
+          await wechatOper.remindCheckMessage(openid_jscy, body.access_token, blzt);
         }
+
       } else {
         let count = await orm.ApplicationInfo.update({
           BLZT: "9",
@@ -921,7 +1066,7 @@ router.get('/need_authority', catchAsyncErrors(async (req, res) => {
     if (u.SQXLM.slice(0, 1) == '[') {
       let sqxlmObjArr = JSON.parse(u.SQXLM);
       for (let i = 0; i < sqxlmObjArr.length; i++) {
-        sqxlmArr.push(sqxlmObjArr[i].value);
+        sqxlmArr.push(`${sqxlmObjArr[i].name}:${sqxlmObjArr[i].value}`);
       }
       sqxlmStr = sqxlmArr.join(',');
     } else {
@@ -945,7 +1090,8 @@ router.get('/need_authority', catchAsyncErrors(async (req, res) => {
       sqxlm: sqxlmStr,
       index: u.INDEX,
       jfsy: u.JFSY,
-      yxdz: u.Customers.YXDZ
+      yxdz: u.Customers.YXDZ,
+      remark: u.REMARK ? u.REMARK : '无'
     }
   });
   if (!responseObjects || responseObjects.length == 0) {
@@ -1385,7 +1531,7 @@ router.post('/check_batch_applications', catchAsyncErrors(async (req, res) => {
         let cpdmArr = item.CPDM.split(',');
         let cplx = await orm.option.CPLX.findOne({
           where: {
-            CPDM: cpdmArr[0]
+            DM: cpdmArr[0]
           }
         });
         if (item.SQLX == "1" && item.SFJMG == "0" && cplx.SFDJ == '0') {

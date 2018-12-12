@@ -72,6 +72,8 @@ router.post('/login', catchAsyncErrors(async (req, res) => {
         role = "4"
     } else if (user.JSDM.indexOf("7") > -1) {
         role = "5"
+    } else if (user.JSDM.indexOf("4") > -1) {
+        role = "6"
     } else {
         role = "1"
     }

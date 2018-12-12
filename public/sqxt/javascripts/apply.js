@@ -29,7 +29,7 @@ $(function () {
         /^[1-9]\d*$/, '申请数量必须为正整数'
       ],
       over1: [
-        /^[2-99]\d*$/, '许可数必须大于1,小于99'
+        /^[1-9][0-9]?$/, '许可数必须大于1,小于99'
       ],
       fixedTel: [
         /^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/, '固定电话号码有误'
@@ -935,6 +935,7 @@ $(function () {
           cpmc: (jfsy == '0' && sfnb == '1' && sqlx == '1') ? formSelects.value('multiselect-cpdm', 'nameStr') : singleSelectName,
           // cpmc: cpmcArray.length === 0 ? $('#select-cpdm').siblings('.layui-form-select').find('dd.layui-this').text() : cpmcArray.join(), //2018/11/02
           // cpmc: $('#select-cpdm').siblings('.layui-form-select').find('dd.layui-this').text(),
+          remark: $('#input-remark').val()
         };
 
         var jmg = $('input[name="jmg"]:checked').val();

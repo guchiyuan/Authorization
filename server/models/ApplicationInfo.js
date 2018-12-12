@@ -21,6 +21,7 @@
         , JFSY: { type: dataTypes.INTEGER }   // 是否甲方使用
         , POST_INDEX: { type: dataTypes.STRING }
         , INVOICE_INDEX: { type: dataTypes.STRING }
+        , REMARK: { type: dataTypes.STRING }
         , INDEX: { type: dataTypes.STRING, primaryKey: true, field: "SQXX_INDEX" }
     }, {
             freezeTableName: true,

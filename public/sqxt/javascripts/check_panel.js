@@ -125,8 +125,6 @@
 
     $('#welcomeUser').click(toggleUserInfoPanel);
 
-
-
     if (roleInfo.role === '0') {
       $('#content-init').hide();
       $('#content-apply').show();
@@ -188,13 +186,9 @@
               }
             );
 
-
-
-
           }
         }
       });
-
 
       getUncheckedUsers();
       $('#btn-checkUsers').show();
@@ -409,6 +403,7 @@
 
           getQrCode($('#input-lxdh').val());
 
+          $('#input-remark').val(userInfo.remark);
 
           var zt;
           switch (userInfo.zt) {
@@ -579,7 +574,8 @@
               "jsyx": $('#input-jsyx').val(),
               "ssqy": $('#select-ssqydm').val(),
               "lxdh": $('#input-lxdh').val(),
-              "openid": response.OPENID
+              "openid": response.OPENID,
+              'remark': $('#input-remark').val()
             };
 
             console.log(reqDataUserInfo);
@@ -1026,7 +1022,7 @@
         success: function (res) {
           console.log(res);
 
-          if (!res.fsr && !res.sqshr) {
+          if (!res.hdr) {
             res.sfnb = '1';
           } else {
             res.sfnb = '0';
@@ -1570,6 +1566,10 @@
         }, {
           field: 'sfgzgzh',
           title: '关注公众号',
+          align: 'center'
+        }, {
+          field: 'remark',
+          title: '备注',
           align: 'center'
         }, {
           field: 'rzzt',

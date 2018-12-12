@@ -18,6 +18,8 @@ module.exports = function (sequlize, dataTypes) {
       , CSSJ: { type: dataTypes.DATE }
       , FSR: { type: dataTypes.STRING }
       , FSSJ: { type: dataTypes.DATE }
+      , HDR: { type: dataTypes.STRING }
+      , HDSJ: { type: dataTypes.DATE }
       , XZQDM: { type: dataTypes.STRING }
   }, {
           freezeTableName: true,

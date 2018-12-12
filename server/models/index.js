@@ -55,11 +55,14 @@ db.LogRecord.belongsTo(db.User, { foreignKey: 'FSR', targetKey: 'INDEX', as: 'Fs
 
 db.ApplicationRecord.belongsTo(db.User, { foreignKey: 'FSR', targetKey: 'INDEX', as: 'Fsr' });
 db.ApplicationRecord.belongsTo(db.User, { foreignKey: 'CSR', targetKey: 'INDEX', as: 'Csr' });
+db.ApplicationRecord.belongsTo(db.User, { foreignKey: 'HDR', targetKey: 'INDEX', as: 'Hdr' });
 
 db.ApplicationInfo.belongsTo(db.PostInfo, { foreignKey: 'POST_INDEX', targetKey: 'INDEX', as: 'Postinfo' });
 db.ApplicationInfo.belongsTo(db.InvoiceInfo, { foreignKey: 'INVOICE_INDEX', targetKey: 'INDEX', as: 'Invoiceinfo' });
 
 db.ApplicationInfo.belongsTo(db.LogRecord, { foreignKey: 'INDEX', targetKey: 'SQXX_INDEX', as: 'Rzjl' });
+
+db.ApplicationInfo.belongsTo(db.option.CPLX, { foreignKey: 'CPDM', targetKey: 'DM', as: 'Cplx' });
 
 
 module.exports = db;

@@ -11,6 +11,7 @@ module.exports = function (sequlize, dataTypes) {
         , JZSJ: { type: dataTypes.DATE }
         , CSR: { type: dataTypes.STRING }
         , FSR: { type: dataTypes.STRING }
+        , HDR: { type: dataTypes.STRING }
         // , SQSHR: { type: dataTypes.STRING }
         , LRR: { type: dataTypes.STRING }
         , BZ: { type: dataTypes.STRING }

@@ -13,6 +13,7 @@ module.exports = function (sequlize, dataTypes) {
         , BZ: { type: dataTypes.STRING }
         , XMDDM: { type: dataTypes.STRING }
         , OPENID: { type: dataTypes.STRING }
+        , REMARK: { type: dataTypes.STRING }
         , INDEX: { type: dataTypes.STRING, primaryKey: true, field: "YHRZXX_INDEX" }
     }, {
             freezeTableName: true,

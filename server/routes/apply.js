@@ -102,6 +102,7 @@ router.get('/get_userInfo', catchAsyncErrors(async (req, res) => {
             ssqy: rzxx.XMDDM,
             zt: rzxx.ZT,
             openid: rzxx.OPENID,
+            remark: rzxx.REMARK ? rzxx.REMARK : '无',
             code: "0000",
         });
     }
@@ -155,7 +156,8 @@ router.post('/submit_userInfo', catchAsyncErrors(async (req, res) => {
             YXDZ: req.body.jsyx,
             XMDDM: req.body.ssqy,
             XZQDM: req.body.ssqy,
-            OPENID: req.body.openid
+            OPENID: req.body.openid,
+            REMARK: req.body.remark
         });
 
         let token = jwt.encode(jwt.generatePayload(payload.phone, payload.roleID, newYh.INDEX, payload.jsIndex));
@@ -172,10 +174,12 @@ router.post('/submit_userInfo', catchAsyncErrors(async (req, res) => {
         yhxx.YXDZ = req.body.jsyx || yhxx.YXDZ;
         yhxx.XMDDM = req.body.ssqy || yhxx.XMDDM;
         yhxx.XZQDM = req.body.ssqy || yhxx.XZQDM;
+        yhxx.REMARK = req.body.remark || yhxx.REMARK;
         yhxx.ZT = "1";
     } else if (req.body.updateUser == "0") {
         yhxx.WECHAT = req.body.wechat || yhxx.WECHAT;
         yhxx.YXDZ = req.body.jsyx || yhxx.YXDZ;
+        yhxx.REMARK = req.body.remark || yhxx.REMARK;
     }
 
 
@@ -325,7 +329,8 @@ router.get('/user_history', catchAsyncErrors(async (req, res) => {
                 user_index: r.YHRZXX_INDEX,
                 bz: r.BZ,
                 sqsj: r.SQSJ,
-                bljssj: r.Rzjl ? r.Rzjl.BLJSSJ : '-'
+                bljssj: r.Rzjl ? r.Rzjl.BLJSSJ : '-',
+                remark: r.REMARK ? r.REMARK : '无'
             }
         });
         return res.json(result);
@@ -347,7 +352,7 @@ router.get('/flowchart_info', catchAsyncErrors(async (req, res) => {
 
         let flowchartInfo_jf;
         flowchartInfo.map(item => {
-            if (item.FSR) {
+            if (item.HDR) {
                 flowchartInfo_jf = item;
             }
         });
@@ -365,13 +370,22 @@ router.get('/flowchart_info', catchAsyncErrors(async (req, res) => {
             }
         })
 
+        let hdr = await orm.User.findOne({
+            where: {
+                INDEX: flowchartInfo_jf.HDR
+            }
+        })
+
         resObj = {
             csr: csr.JSCY,
             csrbm: csr.SSXMZ,
             csrlxdh: csr.LXDH,
-            fsr: fsr.JSCY,
-            fsrbm: fsr.SSXMZ,
-            fsrlxdh: fsr.LXDH
+            fsr: fsr ? fsr.JSCY : null,
+            fsrbm: fsr ? fsr.SSXMZ : null,
+            fsrlxdh: fsr ? fsr.LXDH : null,
+            hdr: hdr.JSCY,
+            hdrbm: hdr.SSXMZ,
+            hdrlxdh: hdr.LXDH
         }
     } else {
         let yhrzxx = await orm.CustomerInfo.findOne({
@@ -791,7 +805,8 @@ router.post('/submitApplication', catchAsyncErrors(async (req, res, next) => {
         JFSY: reqParams.jfsy,
         INDEX: uuidv1(),
         POST_INDEX: reqParams.post_index,
-        INVOICE_INDEX: reqParams.invoice_index
+        INVOICE_INDEX: reqParams.invoice_index,
+        REMARK: reqParams.remark
     });
 
 

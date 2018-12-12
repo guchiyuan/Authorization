@@ -75,7 +75,7 @@
                     <!-- <option value="1">待认证</option> -->
                     <option value="2">待审核</option>
                     <option value="3">初审通过</option>
-                    <!-- <option value="4">二审通过</option> -->
+                    <option value="4">复审通过</option>
                     <option value="5">审核通过</option>
                     <option value="6">在线授权失败</option>
                     <option value="8a">发送授权</option>
@@ -287,6 +287,14 @@
                 <span class="required-mark">* </span>邮箱</label>
               <div class="layui-input-block">
                 <input id="input-jsyx" type="email" name="input-jsyx" required lay-verify="required|email" placeholder="请输入邮箱地址" autocomplete="off"
+                  class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label" for="input-remark">备注</label>
+              <div class="layui-input-block">
+                <input id="input-remark" type="text" name="input-remark"  placeholder="特殊情况备注说明" autocomplete="off"
                   class="layui-input">
               </div>
             </div>
