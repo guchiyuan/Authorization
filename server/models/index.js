@@ -52,6 +52,7 @@ db.ApplicationInfo.belongsTo(db.CustomerInfo, { foreignKey: 'YHRZXX_INDEX', targ
 db.LogRecord.belongsTo(db.User, { foreignKey: 'ZZBLR', targetKey: 'INDEX', as: 'Users' });
 db.LogRecord.belongsTo(db.User, { foreignKey: 'CSR', targetKey: 'INDEX', as: 'Csr' });
 db.LogRecord.belongsTo(db.User, { foreignKey: 'FSR', targetKey: 'INDEX', as: 'Fsr' });
+db.LogRecord.belongsTo(db.User, { foreignKey: 'HDR', targetKey: 'INDEX', as: 'Hdr' });
 
 db.ApplicationRecord.belongsTo(db.User, { foreignKey: 'FSR', targetKey: 'INDEX', as: 'Fsr' });
 db.ApplicationRecord.belongsTo(db.User, { foreignKey: 'CSR', targetKey: 'INDEX', as: 'Csr' });

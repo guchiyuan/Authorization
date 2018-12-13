@@ -202,7 +202,7 @@
       getApplicationInfo();
     }
 
-    
+
 
 
     //-------------------------获取用户信息-----------------------------------------//
@@ -2035,28 +2035,44 @@
                 end: function () {
                   getUncheckedApplications();
                   var reqSaveRzjlData = {};
-                  if (row.blzt == "2") {
-                    reqSaveRzjlData = {
-                      "sqxx_index": row.index,
-                      "sqr": row.yhm,
-                      "sqrdw": row.dwmc,
-                      "lxdh": row.lxdh,
-                      "yxdz": row.yxdz,
-                      "cpmc": row.cpmc,
-                      "sqsl": row.sqsl,
-                      "xzqdm": row.xzqdm,
-                      "bljg": "1",
-                      "bz": "无",
-                      "blzt": 2
-                    };
-                  } else if (row.blzt == "3") {
-                    reqSaveRzjlData = {
-                      "sqxx_index": row.index,
-                      "bljg": "1",
-                      "bz": "无",
-                      "blzt": 3
-                    };
-                  }
+                  // if (row.blzt == "2") {
+                  //   reqSaveRzjlData = {
+                  //     "sqxx_index": row.index,
+                  //     "sqr": row.yhm,
+                  //     "sqrdw": row.dwmc,
+                  //     "lxdh": row.lxdh,
+                  //     "yxdz": row.yxdz,
+                  //     "cpmc": row.cpmc,
+                  //     "sqsl": row.sqsl,
+                  //     "xzqdm": row.xzqdm,
+                  //     "bljg": "1",
+                  //     "bz": "无",
+                  //     "blzt": 2
+                  //   };
+                  // } else if (row.blzt == "3") {
+                  //   reqSaveRzjlData = {
+                  //     "sqxx_index": row.index,
+                  //     "bljg": "1",
+                  //     "bz": "无",
+                  //     "blzt": 3
+                  //   };
+                  // }
+
+
+                  reqSaveRzjlData = {
+                    "sqxx_index": row.index,
+                    "sqr": row.yhm,
+                    "sqrdw": row.dwmc,
+                    "lxdh": row.lxdh,
+                    "yxdz": row.yxdz,
+                    "cpmc": row.cpmc,
+                    "sqsl": row.sqsl,
+                    "xzqdm": row.xzqdm,
+                    "bljg": "1",
+                    "bz": "无",
+                    "blzt": row.blzt
+                  };
+
 
                   console.log(reqSaveRzjlData);
 

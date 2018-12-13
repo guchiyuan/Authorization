@@ -116,7 +116,7 @@ $(function () {
         $('#single-select-cpdm').attr({
           'lay-verify': 'required'
         });
-        loadSelectOptions($('#single-select-cpdm'), singleOptionData)
+        loadSelectOptionsXzqdm($('#single-select-cpdm'), singleOptionData)
         form.render(null, 'div-single-cpdm-filter');
 
         $('#select-xzqdmCity').val("");
@@ -255,7 +255,7 @@ $(function () {
         $('#single-select-cpdm').attr({
           'lay-verify': 'required'
         });
-        loadSelectOptions($('#single-select-cpdm'), singleOptionData)
+        loadSelectOptionsXzqdm($('#single-select-cpdm'), singleOptionData)
         form.render(null, 'div-single-cpdm-filter');
 
         $('#div-djrj').hide();
@@ -332,7 +332,7 @@ $(function () {
           $('#single-select-cpdm').attr({
             'lay-verify': 'required'
           });
-          loadSelectOptions($('#single-select-cpdm'), singleOptionData)
+          loadSelectOptionsXzqdm($('#single-select-cpdm'), singleOptionData)
           form.render(null, 'div-single-cpdm-filter');
         }
 

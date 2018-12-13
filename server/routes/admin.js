@@ -827,6 +827,9 @@ router.get('/get_log', catchAsyncErrors(async (req, res) => {
         }, {
             model: orm.User,
             as: "Fsr"
+        }, {
+            model: orm.User,
+            as: "Hdr"
         }]
     });
 
@@ -849,7 +852,9 @@ router.get('/get_log', catchAsyncErrors(async (req, res) => {
             csr: item.Csr == null ? '-' : item.Csr.JSCY,
             cssj: item.CSSJ == null ? '-' : item.CSSJ,
             fsr: item.Fsr == null ? '-' : item.Fsr.JSCY,
-            fssj: item.FSSJ == null ? '-' : item.FSSJ
+            fssj: item.FSSJ == null ? '-' : item.FSSJ,
+            hdr: item.Hdr == null ? '-' : item.Hdr.JSCY,
+            hdsj: item.HDSJ == null ? '-' : item.HDSJ
         }
     });
 
@@ -895,7 +900,7 @@ router.post('/save_rzjl', catchAsyncErrors(async (req, res) => {
         }
     });
 
-    let blzt = reqParams.blzt;
+    let blzt = parseInt(reqParams.blzt);
     if (blzt == 2) {
         let rzjl1 = await orm.LogRecord.create({
             SQXX_INDEX: reqParams.sqxx_index,
@@ -924,26 +929,55 @@ router.post('/save_rzjl', catchAsyncErrors(async (req, res) => {
             });
         }
     } else if (blzt == 3) {
-        let rzjl2 = await orm.LogRecord.update({
-            FSR: payload.jsIndex,
-            FSSJ: new Date(Date.now()).toMysqlFormatTime(),
-            BLJG: reqParams.bljg,
-            BLJSSJ: new Date(Date.now()).toMysqlFormatTime(),
-            BZ: reqParams.bz,
-            ZZBLR: payload.jsIndex,
-        }, {
+        let cplx = await orm.option.CPLX.findOne({
             where: {
-                SQXX_INDEX: reqParams.sqxx_index
+                MC: reqParams.cpmc
             }
-        })
-        if (!rzjl2) {
-            throw new AppCommonError("无法记录日志", "0006");
+        });
+
+        if (cplx.SFFS === '1') {
+            let rzjl2 = await orm.LogRecord.update({
+                FSR: payload.jsIndex,
+                FSSJ: new Date(Date.now()).toMysqlFormatTime(),
+                BLJG: reqParams.bljg,
+                BLJSSJ: new Date(Date.now()).toMysqlFormatTime(),
+                BZ: reqParams.bz,
+                ZZBLR: payload.jsIndex,
+            }, {
+                where: {
+                    SQXX_INDEX: reqParams.sqxx_index
+                }
+            })
+            if (!rzjl2) {
+                throw new AppCommonError("无法记录日志", "0006");
+            } else {
+                return res.json({
+                    code: "0000"
+                });
+            }
         } else {
-            return res.json({
-                code: "0000"
-            });
+            let rzjl2 = await orm.LogRecord.update({
+                HDR: payload.jsIndex,
+                HDSJ: new Date(Date.now()).toMysqlFormatTime(),
+                BLJG: reqParams.bljg,
+                BLJSSJ: new Date(Date.now()).toMysqlFormatTime(),
+                BZ: reqParams.bz,
+                ZZBLR: payload.jsIndex,
+            }, {
+                where: {
+                    SQXX_INDEX: reqParams.sqxx_index
+                }
+            })
+            if (!rzjl2) {
+                throw new AppCommonError("无法记录日志", "0006");
+            } else {
+                return res.json({
+                    code: "0000"
+                });
+            }
         }
-    } else if (blzt === 4) {
+
+    } else if (blzt == 4) {
         let rzjl3 = await orm.LogRecord.update({
             HDR: payload.jsIndex,
             HDSJ: new Date(Date.now()).toMysqlFormatTime(),
