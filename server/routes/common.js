@@ -134,7 +134,9 @@ router.get('/get_option/:option_name', catchAsyncErrors(async (req, res, next) =
             break;
         case "rjcplx":
             queryOption = orm.option.CPLX;
-            let rjcplx = await queryOption.findAll();
+            let rjcplx = await queryOption.findAll({
+                order: ['CPDM']
+            });
             let rjcplxDict = rjcplx.map(d => {
                 return {
                     mc: d.MC,

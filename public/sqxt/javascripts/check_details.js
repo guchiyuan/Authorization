@@ -2,6 +2,7 @@ $(function () {
 
   var ADDRESS_XZQMC = '/test/xzqmc';
   var ADDRESS_TEMPORARY_AMOUNT = '/test/get_temporary_amount';
+  var ADDRESS_HISTORY_AMOUNT = '/test/get_history_amount';
   var details = JSON.parse(window.sessionStorage.getItem('checkDetails'));
   var reqData = {
     'xzqdm': details.xzqdm.split(",")
@@ -25,6 +26,20 @@ $(function () {
         }
       }
     });
+  });
+
+  $.ajax({
+    type: "GET",
+    url: ADDRESS_HISTORY_AMOUNT,
+    data: {
+      yhrzxx_index: details.yhrzxxIndex
+    },
+    async: false,
+    success: function (res) {
+      if (res.code === '0000') {
+        details.historyAmount = res.data.history_amount
+      }
+    }
   });
 
   $.ajax({
@@ -115,7 +130,7 @@ $(function () {
         details.blzt = '初审通过';
         break;
       case '4':
-        details.blzt = '审核通过';
+        details.blzt = '复审通过';
         break;
       case '5':
         details.blzt = '审核通过';

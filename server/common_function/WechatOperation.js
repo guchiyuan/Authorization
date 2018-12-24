@@ -104,14 +104,36 @@ module.exports = {
 
     if (type == '内部申请审核') {
       templateData.keyword1.value = "授权申请";
-      if (tg === true) {
-        templateData.keyword2.value = "审核通过";
-        templateData.keyword3.value = "无";
-        templateData.remark.value = "请耐心等待制作授权,注意查收邮箱!";
-      } else {
-        templateData.keyword2.value = "申请被拒绝";
-        templateData.keyword3.value = shyj;
-        templateData.remark.value = "如有疑问，请联系您的项目经理。";
+      if (blzt == '3') {
+        if (tg === true) {
+          templateData.keyword2.value = "审核通过";
+          templateData.keyword3.value = "无";
+          templateData.remark.value = "请耐心等待制作授权,注意查收邮箱!";
+        } else {
+          templateData.keyword2.value = "申请被复审人拒绝";
+          templateData.keyword3.value = shyj;
+          templateData.remark.value = "如有疑问，请联系内部复审人。";
+        }
+      } else if (blzt == '2') {
+        if (tg === true) {
+          templateData.keyword2.value = "审核通过";
+          templateData.keyword3.value = "无";
+          templateData.remark.value = "请耐心等待制作授权,注意查收邮箱!";
+        } else {
+          templateData.keyword2.value = "申请被拒绝";
+          templateData.keyword3.value = shyj;
+          templateData.remark.value = "如有疑问，请联系您的项目经理。";
+        }
+      } else if (blzt == '2a') {
+        if (tg === true) {
+          templateData.keyword2.value = "初审通过";
+          templateData.keyword3.value = "无";
+          templateData.remark.value = "请耐心等待复审";
+        } else {
+          templateData.keyword2.value = "申请被初审拒绝";
+          templateData.keyword3.value = shyj;
+          templateData.remark.value = "如有疑问，请联系您的项目经理。";
+        }
       }
     }
 

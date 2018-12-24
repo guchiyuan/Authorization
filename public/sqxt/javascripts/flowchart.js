@@ -231,10 +231,9 @@ if (!flowchart.fsr) {
 }
 
 
-
 var states_nb = ["申请", "审核", "制作授权", "发送授权", "申请成功"];
 var states_nb_zt = ["待审核", "审核通过", "申请成功", "发送授权", "不予办理"];
-if (flowchart.sfnb === '1') {
+if (flowchart.sfnb === '1' && !flowchart.fsr && !flowchart.hdr) {
   states_nb.forEach(function (state) {
     g.setNode(state, {
       label: state
@@ -253,8 +252,6 @@ if (flowchart.sfnb === '1') {
   g.setEdge("发送授权", "申请成功", {
     label: ""
   });
-
-
 
 
   if (flowchart.shzt === '申请成功') {
@@ -287,6 +284,68 @@ if (flowchart.sfnb === '1') {
       g.node(states_nb[i]).style = "fill: #9AFF9A";
     }
     g.node(states_nb[blztIndex + 1]).style = "fill: #EEE685";
+  }
+}
+
+
+var states_nb_2check = ["申请", "内部初审", "内部复审", "制作授权", "发送授权", "申请成功"];
+var states_nb_2check_zt = ["待审核", "初审通过", "复审通过", "申请成功", "发送授权", "不予办理"];
+if (flowchart.sfnb === '1' && flowchart.fsr && !flowchart.hdr) {
+  states_nb_2check.forEach(function (state) {
+    g.setNode(state, {
+      label: state
+    });
+  });
+
+  // Set up the edges
+  g.setEdge("申请", "内部初审", {
+    label: "    审核人：" + flowchart.csr + "\n所属部门：" + flowchart.csrbm + "\n联系电话：" + flowchart.csrlxdh
+  });
+
+  g.setEdge("内部初审", "内部复审", {
+    label: "    审核人：" + flowchart.fsr + "\n所属部门：" + flowchart.fsrbm + "\n联系电话：" + flowchart.fsrlxdh
+  });
+
+  g.setEdge("内部复审", "制作授权", {});
+
+  g.setEdge("制作授权", "发送授权", {});
+
+  g.setEdge("发送授权", "申请成功", {
+    label: ""
+  });
+
+
+  if (flowchart.shzt === '申请成功') {
+    g.node('申请').style = "fill: #9AFF9A";
+    g.node('内部初审').style = "fill: #9AFF9A";
+    g.node('内部复审').style = "fill: #9AFF9A";
+    g.node('制作授权').style = "fill: #9AFF9A";
+    g.node('发送授权').style = "fill: #9AFF9A";
+    g.node('申请成功').style = "fill: #9AFF9A";
+  } else if (flowchart.shzt === '待审核') {
+    g.node('申请').style = "fill: #9AFF9A";
+    g.node('内部初审').style = "fill: #EEE685";
+  } else if (flowchart.shzt === '不予办理' && flowchart_bz) {
+    let blztIndex = states_nb_2check.indexOf(flowchart_bz.shzt);
+
+    for (let i = 0; i <= blztIndex; i++) {
+      g.node(states_nb_2check[i]).style = "fill: #9AFF9A";
+
+    }
+    g.setEdge(states_nb_2check[blztIndex], states_nb_2check[states_nb_2check.length - 1], {
+      label: ""
+    });
+    g.node(states_nb_2check[states_nb_2check.length - 1]).style = "fill: #FF4400";
+  } else if (flowchart.shzt === '在线授权失败' || flowchart.shzt === '邮件发送失败') {
+    g.node('申请').style = "fill: #9AFF9A";
+    g.node('审核').style = "fill: #9AFF9A";
+    g.node('制作授权').style = "fill: #EEE685";
+  } else {
+    let blztIndex = states_nb_2check.indexOf("审核");
+    for (let i = 0; i <= blztIndex; i++) {
+      g.node(states_nb_2check[i]).style = "fill: #9AFF9A";
+    }
+    g.node(states_nb_2check[blztIndex + 1]).style = "fill: #EEE685";
   }
 }
 

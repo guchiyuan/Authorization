@@ -94,7 +94,7 @@ header {
   position: absolute;
   top: 40px;
   bottom: 0px;
-  background-color: #f8f8ff;  
+  background-color: #f8f8ff;
 }
 
 .content {
@@ -282,14 +282,14 @@ td {
   display: none
 }
 
-.required-mark {
+.required-mark,.remark{
   color: red;
 }
 
-#applyHistoryTable{
+#applyHistoryTable {
   table-layout: fixed
 }
 
-  /* #uncheckedApplicationsTable{
+/* #uncheckedApplicationsTable{
     table-layout: fixed
   } */

@@ -317,6 +317,13 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
       applicationSearchCondition.push("3");
     }
 
+    if (userQx.indexOf("4a") > -1) {
+      recordSearchCondition.push({
+        FSR: payload.jsIndex
+      });
+      applicationSearchCondition.push("3");
+    }
+
     if (userQx.indexOf("5") > -1) {
       recordSearchCondition.push({
         HDR: payload.jsIndex
@@ -331,7 +338,7 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
 
 
     let uncheckedApplications = [];
-    orm.sequelize.query("SELECT a.JZSJ as XMJZSJ,b.*,c.YHM,c.LXDH,c.YHDW,c.SFNBCY,c.YXDZ FROM s_sj_sqdj a,s_sj_sqxx b,s_sj_yhrzxx c,s_zd_cplx d WHERE a.XMDDM=b.XMDDM and a.CPDM=b.CPDM and c.YHRZXX_INDEX=b.YHRZXX_INDEX and b.CPDM = d.CPDM and ((a.CSR=\'" + payload.jsIndex + "\'and b.BLZT='2') or (a.FSR=\'" + payload.jsIndex + "\'and b.BLZT='3') or (a.HDR=\'" + payload.jsIndex + "\'and b.BLZT='4') or (a.HDR=\'" + payload.jsIndex + "\'and b.BLZT='3' and d.SFFS = '0' )) group by b.SQXX_INDEX", {
+    orm.sequelize.query("SELECT a.JZSJ as XMJZSJ,b.*,c.YHM,c.LXDH,c.YHDW,c.SFNBCY,c.YXDZ FROM s_sj_sqdj a,s_sj_sqxx b,s_sj_yhrzxx c,s_zd_cplx d WHERE a.XMDDM=b.XMDDM and a.CPDM=b.CPDM and c.YHRZXX_INDEX=b.YHRZXX_INDEX and b.CPDM = d.CPDM and ((a.CSR=\'" + payload.jsIndex + "\'and b.BLZT='2') or (a.FSR=\'" + payload.jsIndex + "\'and b.BLZT='3') or (a.HDR=\'" + payload.jsIndex + "\'and b.BLZT='4') or (a.HDR=\'" + payload.jsIndex + "\'and b.BLZT='3' and d.SFFS = '0' ) or (a.FSR=\'" + payload.jsIndex + "\'and b.BLZT='3' and a.HDR is null)) group by b.SQXX_INDEX", {
         type: orm.sequelize.QueryTypes.SELECT
       })
       .then(results => {
@@ -700,7 +707,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
 
   //// 项目经理审核
   if (userQx.indexOf('7') > -1) {
-    let rows_update = rows_submit.filter(item => item.BLZT == "2" && item.Customers.SFNBCY == "1");
+    let rows_update = rows_submit.filter(item => item.BLZT == "2" && item.JFSY == "0" && item.Customers.SFNBCY == "1" && (item.Customers.YHDW.indexOf('不动产软件中心') > -1 || item.Customers.YHDW.indexOf('软件工程中心') > -1));
     if (rows_update && rows_update.length != 0) {
       if (tg) {
         let count = await orm.ApplicationInfo.update({
@@ -767,6 +774,119 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
         });
         rows = rows + count[0];
         if (blzt === '2') {
+          if (!openid) {
+            await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_nbsq);
+          } else {
+            await wechatOper.sendTemplateMessage(openid, body.access_token, blzt, tg, req.body.shyj, "内部申请审核");
+          }
+
+        }
+      }
+    }
+
+    let rows_2check = rows_submit.filter(item => item.BLZT == "2" && item.JFSY == "0" && item.Customers.SFNBCY == "1" && !(item.Customers.YHDW.indexOf('不动产软件中心') > -1 || item.Customers.YHDW.indexOf('软件工程中心') > -1));
+    if (rows_2check && rows_2check.length != 0) {
+      if (tg) {
+        let count = await orm.ApplicationInfo.update({
+          BLZT: "3"
+        }, {
+          where: {
+            INDEX: {
+              [orm.Sequelize.Op.in]: rows_2check.map(item => item.INDEX)
+            },
+            BLZT: "2"
+          }
+        });
+
+        if (blzt === '2') {
+          if (!openid) {
+            await authOper.sendMessage(lxdh, config.allow_application_sendMessage_nbsq);
+          } else {
+            await wechatOper.sendTemplateMessage(openid, body.access_token, '2a', tg, req.body.shyj, "内部申请审核");
+          }
+        }
+
+      } else {
+        let count = await orm.ApplicationInfo.update({
+          BLZT: "9",
+          BZ: `{"shyj":"${req.body.shyj}","shzt":"内部初审"}`
+        }, {
+          where: {
+            INDEX: {
+              [orm.Sequelize.Op.in]: indexes_update
+            },
+            BLZT: "2"
+          }
+        });
+        rows = rows + count[0];
+        if (blzt === '2') {
+          if (!openid) {
+            await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_nbsq);
+          } else {
+            await wechatOper.sendTemplateMessage(openid, body.access_token, '2a', tg, req.body.shyj, "内部申请审核");
+          }
+
+        }
+      }
+    }
+  }
+
+
+  if (userQx.indexOf("4a") > -1) {
+    let rows_update = rows_submit.filter(item => item.BLZT == "3" && item.Customers.SFNBCY == "1" && item.JFSY == "0" && !(item.Customers.YHDW.indexOf('不动产软件中心') > -1 || item.Customers.YHDW.indexOf('软件工程中心') > -1));
+    if (rows_update && rows_update.length != 0) {
+      if (tg) {
+        let count = await orm.ApplicationInfo.update({
+          BLZT: "5"
+        }, {
+          where: {
+            INDEX: {
+              [orm.Sequelize.Op.in]: rows_update.map(item => item.INDEX)
+            },
+            BLZT: "3"
+          }
+        });
+        rows = rows + count[0];
+    
+        let rows_make = [];
+
+        for (let i = 0; i < rows_update.length; i++) {
+          let item = rows_update[i];
+          let cpdmArr = item.CPDM.split(',');
+          let cplx = await orm.option.CPLX.findOne({
+            where: {
+              DM: cpdmArr[0]
+            }
+          });
+          if (item.SQLX == "1" && item.SFJMG == "0" && cplx.SFDJ == '0') {
+            rows_make.push(item);
+          }
+        }
+        console.log('自动制作授权的申请', rows_make);
+
+        MakeAuthority(rows_make.map(item => item.INDEX));
+        if (blzt === '3') {
+          if (!openid) {
+            await authOper.sendMessage(lxdh, config.allow_application_sendMessage_nbsq);
+          } else {
+            await wechatOper.sendTemplateMessage(openid, body.access_token, blzt, tg, req.body.shyj, "内部申请审核");
+          }
+        }
+
+      } else {
+        let count = await orm.ApplicationInfo.update({
+          BLZT: "9",
+          BZ: `{"shyj":"${req.body.shyj}","shzt":"内部复审"}`
+        }, {
+          where: {
+            INDEX: {
+              [orm.Sequelize.Op.in]: indexes_update
+            },
+            BLZT: "3"
+          }
+        });
+        rows = rows + count[0];
+        if (blzt === '3') {
           if (!openid) {
             await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_nbsq);
           } else {
@@ -856,14 +976,14 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
       }
     }
   }
-  
+
   //// 复审
   if (userQx.indexOf("4") > -1) {
     //// 甲方申请或者内部帮甲方申请的都要走初审复审模式
     let rows_update = rows_submit.filter(item => item.BLZT == "3" &&
       (item.Customers.SFNBCY == "0" || (item.Customers.SFNBCY == "1" && item.JFSY == "1")));
     if (rows_update && rows_update.length != 0) {
-      if (tg) {    
+      if (tg) {
         let count = await orm.ApplicationInfo.update({
           BLZT: "4"
         }, {
@@ -1061,17 +1181,17 @@ router.get('/need_authority', catchAsyncErrors(async (req, res) => {
       return x;
   });
   let responseObjects = need_authorities.map(u => {
-    let sqxlmArr = [];
-    let sqxlmStr;
-    if (u.SQXLM.slice(0, 1) == '[') {
-      let sqxlmObjArr = JSON.parse(u.SQXLM);
-      for (let i = 0; i < sqxlmObjArr.length; i++) {
-        sqxlmArr.push(`${sqxlmObjArr[i].name}:${sqxlmObjArr[i].value}`);
-      }
-      sqxlmStr = sqxlmArr.join(',');
-    } else {
-      sqxlmStr = u.SQXLM
-    }
+    // let sqxlmArr = [];
+    // let sqxlmStr;
+    // if (u.SQXLM.slice(0, 1) == '[') {
+    //   let sqxlmObjArr = JSON.parse(u.SQXLM);
+    //   for (let i = 0; i < sqxlmObjArr.length; i++) {
+    //     sqxlmArr.push(`${sqxlmObjArr[i].name}:${sqxlmObjArr[i].value}`);
+    //   }
+    //   sqxlmStr = sqxlmArr.join(',');
+    // } else {
+    //   sqxlmStr = u.SQXLM
+    // }
     return {
       yhm: u.Customers.YHM,
       xzqdm: u.SQXZDM,
@@ -1087,7 +1207,8 @@ router.get('/need_authority', catchAsyncErrors(async (req, res) => {
       swlxr: u.SWLXR,
       xmddm: u.XMDDM,
       sqxks: u.SQXKS,
-      sqxlm: sqxlmStr,
+      // sqxlm: sqxlmStr,
+      sqxlm: u.SQXLM,
       index: u.INDEX,
       jfsy: u.JFSY,
       yxdz: u.Customers.YXDZ,
@@ -1445,7 +1566,6 @@ router.post('/save_batch_rzjl', catchAsyncErrors(async (req, res) => {
       }]
     });
     console.log(row.INDEX);
-
     let rzjl = await orm.LogRecord.create({
       SQXX_INDEX: row.INDEX,
       SQR: row.Customers.YHM,
@@ -1511,7 +1631,7 @@ router.post('/check_batch_applications', catchAsyncErrors(async (req, res) => {
 
   //// 项目经理才能批量审核
   if (userQx.indexOf('7') > -1) {
-    let rows_update = rows_submit.filter(item => item.BLZT == "2" && item.Customers.SFNBCY == "1");
+    let rows_update = rows_submit.filter(item => item.BLZT == "2" && item.JFSY == "0" &&  item.Customers.SFNBCY == "1" && (item.Customers.YHDW.indexOf('不动产软件中心') > -1 || item.Customers.YHDW.indexOf('软件工程中心') > -1));
     if (rows_update && rows_update.length != 0) {
       let count = await orm.ApplicationInfo.update({
         BLZT: "5"
@@ -1552,8 +1672,76 @@ router.post('/check_batch_applications', catchAsyncErrors(async (req, res) => {
         code: "0000"
       });
     }
+
+    let rows_2check = rows_submit.filter(item => item.BLZT == "2" && item.JFSY == "0" && item.Customers.SFNBCY == "1" && !(item.Customers.YHDW.indexOf('不动产软件中心') > -1 || item.Customers.YHDW.indexOf('软件工程中心') > -1));
+    if (rows_2check && rows_2check.length != 0) {
+      if (tg) {
+        let count = await orm.ApplicationInfo.update({
+          BLZT: "3"
+        }, {
+          where: {
+            INDEX: {
+              [orm.Sequelize.Op.in]: rows_2check.map(item => item.INDEX)
+            },
+            BLZT: "2"
+          }
+        });
+
+        if (blzt === '2') {
+          if (!openid) {
+            await authOper.sendMessage(lxdh, config.allow_application_sendMessage_nbsq);
+          } else {
+            await wechatOper.sendTemplateMessage(openid, body.access_token, '2a', tg, req.body.shyj, "内部申请审核");
+          }
+        }
+
+      } else {
+        let count = await orm.ApplicationInfo.update({
+          BLZT: "9",
+          BZ: `{"shyj":"${req.body.shyj}","shzt":"内部初审"}`
+        }, {
+          where: {
+            INDEX: {
+              [orm.Sequelize.Op.in]: indexes_update
+            },
+            BLZT: "2"
+          }
+        });
+        rows = rows + count[0];
+        if (blzt === '2') {
+          if (!openid) {
+            await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_nbsq);
+          } else {
+            await wechatOper.sendTemplateMessage(openid, body.access_token, '2a', tg, req.body.shyj, "内部申请审核");
+          }
+
+        }
+      }
+    }
+
   }
 
+}))
+
+
+router.get('/get_history_amount', catchAsyncErrors(async (req, res) => {
+  let sqxx = await orm.ApplicationInfo.findAll({
+    where: {
+      YHRZXX_INDEX: req.query.yhrzxx_index
+    }
+  })
+
+  let historyAmount = 0;
+  sqxx.forEach(element => {
+    historyAmount = historyAmount + element.SQSL
+  });
+  let result = {
+    code:'0000',
+    data:{
+      history_amount: historyAmount.toString()
+    }
+  }
+  res.json(result)
 }))
 
 

@@ -15,7 +15,7 @@ $(function () {
   var reqData = {
     'xzqdm': details.xzqdm.split(",")
   };
-  
+
   if (!details.swhtmc) {
     details.swhtmc = '无';
   }
@@ -101,7 +101,7 @@ $(function () {
       break;
   }
 
-  details.sqxlm = details.sqxlm.replace(/,/g, '<br>')
+  // details.sqxlm = details.sqxlm.replace(/,/g, '<br>')
 
   var tpl = $("#checkDetails-tpl").html();
   //预编译模板
@@ -111,15 +111,39 @@ $(function () {
   //输入模板
   $("#checkDetails-container").html(content);
 
-  $('#sqxlm').html(details.sqxlm);
+  // $('#sqxlm').html(details.sqxlm);
 
   if (details.swhtmc !== '无') {
     $('#show-jfsy').hide();
   }
 
+  function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+
   layui.use(['layer', 'form'], function () {
     var layer = layui.layer;
     var form = layui.form;
+
+    $('.btn-download').click(function () {
+      console.log(details.sqxlm);
+      // download("hello.dat", "This is the content of my file :)");
+      var sqxlmArr = JSON.parse(details.sqxlm);
+      console.log(sqxlmArr);
+      sqxlmArr.forEach(function (item) {
+        download(item.name + ".dat", item.value);
+      });
+
+    })
 
     $('.btn-allow').click(function () {
       layer.alert('确认已经完成授权制作并发送', {
@@ -212,7 +236,7 @@ $(function () {
               'lxdh': details.lxdh,
               "sftg": "0",
               "shyj": shyj,
-              "jmg": details.jmg              
+              "jmg": details.jmg
             };
 
 

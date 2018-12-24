@@ -109,7 +109,6 @@ router.get('/selectionscpdj', catchAsyncErrors(async (req, res) => {
 
     let xmjlArray = await orm.User.findAll({
         where: {
-
             jsdm: {
                 [orm.Sequelize.Op.like]: '%7%'
             }
@@ -118,7 +117,8 @@ router.get('/selectionscpdj', catchAsyncErrors(async (req, res) => {
     let xmjl = xmjlArray.map(d => {
         return {
             value: d.INDEX,
-            label: d.JSCY
+            label: d.JSCY,
+            need2check: (d.SSBM.indexOf('不动产软件中心') > -1 || d.SSBM.indexOf('软件工程中心') > -1) ? '0' : '1'
         }
     });
 
@@ -139,9 +139,9 @@ router.get('/selectionscpdj', catchAsyncErrors(async (req, res) => {
 
     let fsrArray = await orm.User.findAll({
         where: {
-
             jsdm: {
-                [orm.Sequelize.Op.like]: '%4%'
+                [orm.Sequelize.Op.like]: '%4%',
+                [orm.Sequelize.Op.notLike]: '%4a%',
             }
         }
     });
@@ -152,6 +152,20 @@ router.get('/selectionscpdj', catchAsyncErrors(async (req, res) => {
         }
     });
 
+
+    let innerFsrArray = await orm.User.findAll({
+        where: {
+            jsdm: {
+                [orm.Sequelize.Op.like]: '%4a%',
+            }
+        }
+    });
+    let innerFsr = innerFsrArray.map(d => {
+        return {
+            value: d.INDEX,
+            label: d.JSCY
+        }
+    });
 
     let hdrArray = await orm.User.findAll({
         where: {
@@ -195,7 +209,8 @@ router.get('/selectionscpdj', catchAsyncErrors(async (req, res) => {
             csr: csr,
             fsr: fsr,
             hdr: hdr,
-            lrr: lrr
+            lrr: lrr,
+            innerfsr:innerFsr
         }
     })
 }));
@@ -897,7 +912,11 @@ router.post('/save_rzjl', catchAsyncErrors(async (req, res) => {
     let sqxx = await orm.ApplicationInfo.findOne({
         where: {
             INDEX: reqParams.sqxx_index
-        }
+        },
+        include: [{
+          model: orm.CustomerInfo,
+          as: "Customers"
+        }]
     });
 
     let blzt = parseInt(reqParams.blzt);
@@ -935,7 +954,7 @@ router.post('/save_rzjl', catchAsyncErrors(async (req, res) => {
             }
         });
 
-        if (cplx.SFFS === '1') {
+        if (((cplx.SFFS === '1' && sqxx.Customers.SFNBCY === '0') || (cplx.SFFS === '1' && sqxx.JFSY === '1')) || ((sqxx.Customers.YHDW.indexOf('不动产软件中心') > -1 || sqxx.Customers.YHDW.indexOf('软件工程中心') > -1) && sqxx.Customers.SFNBCY === '1' && sqxx.JFSY === '0')) {
             let rzjl2 = await orm.LogRecord.update({
                 FSR: payload.jsIndex,
                 FSSJ: new Date(Date.now()).toMysqlFormatTime(),

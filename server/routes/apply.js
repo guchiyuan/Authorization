@@ -340,7 +340,7 @@ router.get('/user_history', catchAsyncErrors(async (req, res) => {
 //-------------------------获取审核流程信息--------------------------------------------//
 router.get('/flowchart_info', catchAsyncErrors(async (req, res) => {
     let resObj;
-    if (req.query.xmddm !== '') {
+    if (req.query.xmddm) {
         let flowchartInfo = await orm.ApplicationRecord.findAll({
             where: {
                 CPDM: req.query.cpdm,
@@ -421,13 +421,35 @@ router.get('/flowchart_info', catchAsyncErrors(async (req, res) => {
             }
         });
 
-        if (djxxInfo) {
+        if (djxxInfo && djxxInfo.FSR) {
+            let jscy = await orm.User.findOne({
+                where: {
+                    INDEX: djxxInfo.FSR,
+                    JSDM: {
+                        [orm.Sequelize.Op.like]: '%4a%'
+                    }
+                }
+            });
+            resObj = {
+                csr: xmjlMc,
+                csrbm: xmjlSsxmz,
+                csrlxdh: xmjlLxdh,
+                fsr: jscy.JSCY,
+                fsrbm: jscy.SSXMZ,
+                fsrlxdh: jscy.LXDH
+            };
+        }
+
+        if (djxxInfo && !djxxInfo.FSR) {
             resObj = {
                 csr: xmjlMc,
                 csrbm: xmjlSsxmz,
                 csrlxdh: xmjlLxdh,
             };
         }
+
+        console.log(resObj);
+        
     }
     res.json(resObj)
 }));
@@ -650,7 +672,7 @@ router.post('/submitApplication', catchAsyncErrors(async (req, res, next) => {
             try {
                 sqxlmObj.forEach(item => {
                     let iv = [0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF];
-                    let text = des.decrypt(item.value, iv);               
+                    let text = des.decrypt(item.value, iv);
                     if (text.indexOf('�') > -1) {
                         throw new AppCommonError("上传的授权序列码有误，请重新导出", "0001");
                     }
