@@ -44,7 +44,7 @@
         <label class="layui-form-label" for="input-sqxks">
           <span class="required-mark">* </span>授权许可数</label>
         <div class="layui-input-block">
-          <input id="input-sqxks" type="number" name="input-sqxks" required lay-verify="required|over1" placeholder="请输入申请数量（客户端允许连接的最大数量）"
+          <input id="input-sqxks" type="number" name="input-sqxks" lay-verify="required|over1" placeholder="请输入申请数量（客户端允许连接的最大数量）"
             autocomplete="off" class="layui-input" min="2">
         </div>
       </div>
@@ -109,7 +109,7 @@
         <label class="layui-form-label" for="input-swhtmc">
           <span class="required-mark">* </span>商务合同</label>
         <div class="layui-input-block">
-          <input id="input-swhtmc" type="text" name="input-swhtmc" required lay-verify="required" placeholder="请输入合同名称"
+          <input id="input-swhtmc" type="text" name="input-swhtmc" lay-verify="required" placeholder="请输入合同名称"
             autocomplete="off" class="layui-input">
         </div>
       </div>
@@ -150,7 +150,7 @@
           <label class="layui-form-label" for="input-sjr">
             <span class="required-mark">* </span>收件人姓名</label>
           <div class="layui-input-block layui-form post-info" lay-filter="sjr-filter">
-            <input id="input-sjr" type="text" name="input-sjr" required lay-verify="required" placeholder="请输入收件人姓名"
+            <input id="input-sjr" type="text" name="input-sjr" lay-verify="required" placeholder="请输入收件人姓名"
               autocomplete="off" class="layui-input">
           </div>
         </div>
@@ -160,7 +160,7 @@
           <label class="layui-form-label" for="input-sjrlxdh">
             <span class="required-mark">* </span>收件人电话</label>
           <div class="layui-input-block layui-form post-info" lay-filter="sjrlxdh-filter">
-            <input id="input-sjrlxdh" type="text" name="input-sjrlxdh" required lay-verify="required" placeholder="请输入收件人电话"
+            <input id="input-sjrlxdh" type="text" name="input-sjrlxdh" lay-verify="required" placeholder="请输入收件人电话"
               autocomplete="off" class="layui-input">
           </div>
         </div>
@@ -169,7 +169,7 @@
           <label class="layui-form-label" for="input-sjrdz">
             <span class="required-mark">* </span>收件人地址</label>
           <div class="layui-input-block layui-form post-info" lay-filter="sjrdz-filter">
-            <input id="input-sjrdz" type="text" name="input-sjrdz" required lay-verify="required" placeholder="请输入收件人地址"
+            <input id="input-sjrdz" type="text" name="input-sjrdz" lay-verify="required" placeholder="请输入收件人地址"
               autocomplete="off" class="layui-input">
           </div>
         </div>
@@ -187,7 +187,7 @@
           <label class="layui-form-label" for="input-company">
             <span class="required-mark">* </span>公司名称</label>
           <div class="layui-input-block layui-form invoice-info" lay-filter="company-filter">
-            <input id="input-company" type="text" name="input-company" required lay-verify="required" placeholder="请输入公司名称"
+            <input id="input-company" type="text" name="input-company" lay-verify="required" placeholder="请输入公司名称"
               autocomplete="off" class="layui-input">
           </div>
         </div>
@@ -196,7 +196,7 @@
           <label class="layui-form-label" for="input-companylxdh">
             <span class="required-mark">* </span>公司电话</label>
           <div class="layui-input-block layui-form invoice-info" lay-filter="companylxdh-filter">
-            <input id="input-companylxdh" type="text" name="input-companylxdh" required lay-verify="required"
+            <input id="input-companylxdh" type="text" name="input-companylxdh" lay-verify="required"
               placeholder="请输入公司电话" autocomplete="off" class="layui-input">
           </div>
         </div>
@@ -205,7 +205,7 @@
           <label class="layui-form-label" for="input-companydz">
             <span class="required-mark">* </span>公司地址</label>
           <div class="layui-input-block layui-form invoice-info" lay-filter="companydz-filter">
-            <input id="input-companydz" type="text" name="input-companydz" required lay-verify="required" placeholder="请输入公司地址"
+            <input id="input-companydz" type="text" name="input-companydz" lay-verify="required" placeholder="请输入公司地址"
               autocomplete="off" class="layui-input">
           </div>
         </div>
@@ -214,7 +214,7 @@
           <label class="layui-form-label" for="input-tax">
             <span class="required-mark">* </span>纳税识别号</label>
           <div class="layui-input-block layui-form invoice-info" lay-filter="tax-filter">
-            <input id="input-tax" type="text" name="input-tax" required lay-verify="required" placeholder="请输入纳税识别号"
+            <input id="input-tax" type="text" name="input-tax" lay-verify="required" placeholder="请输入纳税识别号"
               autocomplete="off" class="layui-input">
           </div>
         </div>
@@ -223,7 +223,7 @@
           <label class="layui-form-label" for="input-bank">
             <span class="required-mark">* </span>开户银行</label>
           <div class="layui-input-block layui-form invoice-info" lay-filter="bank-filter">
-            <input id="input-bank" type="text" name="input-bank" required lay-verify="required" placeholder="请输入银行名称"
+            <input id="input-bank" type="text" name="input-bank" lay-verify="required" placeholder="请输入银行名称"
               autocomplete="off" class="layui-input">
           </div>
         </div>
@@ -232,7 +232,7 @@
           <label class="layui-form-label" for="input-account">
             <span class="required-mark">* </span>银行账号</label>
           <div class="layui-input-block layui-form invoice-info" lay-filter="account-filter">
-            <input id="input-account" type="text" name="input-account" required lay-verify="required" placeholder="请输入银行账号"
+            <input id="input-account" type="text" name="input-account" lay-verify="required" placeholder="请输入银行账号"
               autocomplete="off" class="layui-input">
           </div>
         </div>
@@ -242,7 +242,7 @@
         <label class="layui-form-label" for="input-sqsl">
           <span class="required-mark">* </span>申请数量</label>
         <div class="layui-input-block">
-          <input id="input-sqsl" type="number" name="input-sqsl" required lay-verify="required|isNumber" placeholder="请输入申请数量"
+          <input id="input-sqsl" type="number" name="input-sqsl" lay-verify="required|isNumber" placeholder="请输入申请数量"
             autocomplete="off" class="layui-input" min="1" max="10">
         </div>
       </div>
@@ -255,7 +255,7 @@
           <input type="radio" name="jzsjlx" value="3" title="自定义截止时间" lay-filter="jzsjlx-filter">
         </div>
         <div class="layui-input-block" id="customJzsj" style="display: none">
-          <input id="input-jzsj" type="" name="input-jzsj" required lay-verify="" placeholder="请输入自定义截止时间" autocomplete="off"
+          <input id="input-jzsj" type="" name="input-jzsj" lay-verify="" placeholder="请输入自定义截止时间" autocomplete="off"
             class="layui-input layui-disabled" disabled="disabled">
         </div>
       </div>

@@ -882,8 +882,19 @@ $(function () {
 
 
     });
-
-
+    
+    
+    // function debounce(fn, delay) {
+    //   // 记录上一次的延时器
+    //   var timer = null;
+    //   return function () {
+    //     // 清除上一次延时器
+    //     clearTimeout(timer)
+    //     timer = setTimeout(function () {
+    //       fn.apply(this)
+    //     }, delay)
+    //   }
+    // }
 
     form.on('submit(formApplication)', function (data) {
       // //2018/11/02

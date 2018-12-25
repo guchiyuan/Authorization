@@ -136,19 +136,44 @@ $(function () {
 
     $('.btn-download').click(function () {
       console.log(details.sqxlm);
+      var sqxlmArr = [];
       // download("hello.dat", "This is the content of my file :)");
-      var sqxlmArr = JSON.parse(details.sqxlm);
-      console.log(sqxlmArr);
-      sqxlmArr.forEach(function (item) {
-        download(item.name + ".dat", item.value);
-      });
+      if (details.sqxlm.slice(0, 1) === '[') {
+        sqxlmArr = JSON.parse(details.sqxlm);
+        console.log(sqxlmArr);
+        if (sqxlmArr.length === 0) {
+          layer.alert('请注意，此申请为加密狗模式')
+        } else {
+          sqxlmArr.forEach(function (item) {
+            download(item.name + ".dat", item.value);
+          });
+        }
+      } else {
+        sqxlmArr = details.sqxlm.split(',');
+        sqxlmArr.forEach(function (item, i) {
+          download(details.yhm + '微信申请' + i + ".dat", item);
+        });
+      }
+
 
     })
+
+    function debounce(fn, delay) {
+      // 记录上一次的延时器
+      var timer = null;
+      return function () {
+        // 清除上一次延时器
+        clearTimeout(timer)
+        timer = setTimeout(function () {
+          fn.apply(this)
+        }, delay)
+      }
+    }
 
     $('.btn-allow').click(function () {
       layer.alert('确认已经完成授权制作并发送', {
         title: '通过认证'
-      }, function () {
+      }, debounce(function () {
         var reqDataCheckedAuthority = {
           'index': details.index,
           'lxdh': details.lxdh,
@@ -190,7 +215,7 @@ $(function () {
             console.log(err);
           }
         });
-      });
+      },2000));
     })
 
     $('.btn-refuse').click(function () {
@@ -213,7 +238,7 @@ $(function () {
         area: ['65%', '65%'],
         content: $('#div-refuseShyj').html(),
         btn: ['拒绝认证', '取消'],
-        yes: function (idx) {
+        yes: debounce(function (idx) {
           var shyj;
           var otherShyj = $('.layui-layer .refuseShyj textarea').val().trim();
           var commonShyj = $('.layui-layer .select-refuseshyj').find("option:selected").text();
@@ -277,7 +302,7 @@ $(function () {
             });
           }
 
-        }
+        },2000)
       });
     })
 

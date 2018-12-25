@@ -953,8 +953,8 @@ router.post('/save_rzjl', catchAsyncErrors(async (req, res) => {
                 MC: reqParams.cpmc
             }
         });
-
-        if (((cplx.SFFS === '1' && sqxx.Customers.SFNBCY === '0') || (cplx.SFFS === '1' && sqxx.JFSY === '1')) || ((sqxx.Customers.YHDW.indexOf('不动产软件中心') > -1 || sqxx.Customers.YHDW.indexOf('软件工程中心') > -1) && sqxx.Customers.SFNBCY === '1' && sqxx.JFSY === '0')) {
+        
+        if (((cplx.SFFS === '1' && sqxx.Customers.SFNBCY === '0') || !(cplx.SFFS === '1' && sqxx.JFSY === '1')) || ((sqxx.Customers.YHDW.indexOf('不动产软件中心') > -1 || sqxx.Customers.YHDW.indexOf('软件工程中心') > -1) && sqxx.Customers.SFNBCY === '1' && sqxx.JFSY === '0')) {
             let rzjl2 = await orm.LogRecord.update({
                 FSR: payload.jsIndex,
                 FSSJ: new Date(Date.now()).toMysqlFormatTime(),

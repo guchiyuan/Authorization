@@ -224,6 +224,9 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
   let applicationSearchCondition = [];
   let userQx = payload.roleID.split(',');
 
+  console.log(userQx, payload);
+
+
   if (userQx.indexOf('7') > -1) {
     let jsUser = await orm.User.findOne({
       where: {
@@ -302,6 +305,62 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
       throw new AppCommonError("当前用户无待审申请", "20022");
     }
     return res.json(responseObjects);
+  } else if (userQx.indexOf('4a') > -1) {
+
+    let sqxx = await orm.ApplicationInfo.findAll({
+      where: {
+        BLZT: 3
+      },
+      include: [{
+        model: orm.CustomerInfo,
+        as: "Customers"
+      }]
+    })
+
+    let uncheckedSqxx = sqxx.filter(item => item.Customers.SFNBCY === '1' && item.JFSY === '0');
+
+    let responseObj = uncheckedSqxx.map(item => {
+      let sqxlmArr = [];
+      let sqxlmStr;
+      if (item.SQXLM.slice(0, 1) == '[') {
+        let sqxlmObjArr = JSON.parse(item.SQXLM);
+        for (let i = 0; i < sqxlmObjArr.length; i++) {
+          sqxlmArr.push(sqxlmObjArr[i].value);
+        }
+        sqxlmStr = sqxlmArr.join(',');
+      } else {
+        sqxlmStr = item.SQXLM
+      }
+      return {
+        yhm: item.Customers.YHM,
+        xzqdm: item.SQXZDM,
+        dwmc: item.Customers.YHDW,
+        lxdh: item.Customers.LXDH,
+        yxdz: item.Customers.YXDZ,
+        blzt: item.BLZT,
+        sqlx: item.SQLX,
+        cpmc: item.CPMC,
+        jmg: item.SFJMG,
+        jfsy: item.JFSY,
+        sqsl: item.SQSL,
+        jzsj: item.JZSJ,
+        swhtmc: item.SWHTMC,
+        swlxr: item.SWLXR,
+        xmddm: item.XMDDM,
+        sqxks: item.SQXKS,
+        sqxlm: sqxlmStr,
+        index: item.INDEX,
+        yhrzxxIndex: item.YHRZXX_INDEX,
+        cpdm: item.CPDM,
+        sqsj: item.SQSJ,
+        remark: item.REMARK ? item.REMARK : '无'
+      }
+    })
+
+    if (responseObj.length == 0) {
+      throw new AppCommonError("当前用户无待审申请", "20022");
+    }
+    return res.json(responseObj);
   } else {
     //查找审核状态为2的给初审人（3），查找审核状态为3的给复审人（4）
     if (userQx.indexOf("3") > -1) {
@@ -317,12 +376,12 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
       applicationSearchCondition.push("3");
     }
 
-    if (userQx.indexOf("4a") > -1) {
-      recordSearchCondition.push({
-        FSR: payload.jsIndex
-      });
-      applicationSearchCondition.push("3");
-    }
+    // if (userQx.indexOf("4a") > -1) {
+    //   recordSearchCondition.push({
+    //     FSR: payload.jsIndex
+    //   });
+    //   applicationSearchCondition.push("3");
+    // }
 
     if (userQx.indexOf("5") > -1) {
       recordSearchCondition.push({
@@ -338,10 +397,11 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
 
 
     let uncheckedApplications = [];
-    orm.sequelize.query("SELECT a.JZSJ as XMJZSJ,b.*,c.YHM,c.LXDH,c.YHDW,c.SFNBCY,c.YXDZ FROM s_sj_sqdj a,s_sj_sqxx b,s_sj_yhrzxx c,s_zd_cplx d WHERE a.XMDDM=b.XMDDM and a.CPDM=b.CPDM and c.YHRZXX_INDEX=b.YHRZXX_INDEX and b.CPDM = d.CPDM and ((a.CSR=\'" + payload.jsIndex + "\'and b.BLZT='2') or (a.FSR=\'" + payload.jsIndex + "\'and b.BLZT='3') or (a.HDR=\'" + payload.jsIndex + "\'and b.BLZT='4') or (a.HDR=\'" + payload.jsIndex + "\'and b.BLZT='3' and d.SFFS = '0' ) or (a.FSR=\'" + payload.jsIndex + "\'and b.BLZT='3' and a.HDR is null)) group by b.SQXX_INDEX", {
+    orm.sequelize.query("SELECT a.JZSJ as XMJZSJ,b.*,c.YHM,c.LXDH,c.YHDW,c.SFNBCY,c.YXDZ FROM s_sj_sqdj a,s_sj_sqxx b,s_sj_yhrzxx c,s_zd_cplx d WHERE a.XMDDM=b.XMDDM and a.CPDM=b.CPDM and c.YHRZXX_INDEX=b.YHRZXX_INDEX and b.CPDM = d.CPDM and ((a.CSR=\'" + payload.jsIndex + "\'and b.BLZT='2') or (a.FSR=\'" + payload.jsIndex + "\'and b.BLZT='3') or (a.HDR=\'" + payload.jsIndex + "\'and b.BLZT='4') or (a.HDR=\'" + payload.jsIndex + "\'and b.BLZT='3' and d.SFFS = '0' )) group by b.SQXX_INDEX", {
         type: orm.sequelize.QueryTypes.SELECT
       })
       .then(results => {
+        console.log(results);
         let responseObj = results.map(result => {
           let sqxlmArr = [];
           let sqxlmStr;
@@ -385,8 +445,7 @@ router.get('/unchecked_applications', catchAsyncErrors(async (req, res, next) =>
 
 
         // 选出甲方用户申请或者内部成员为甲方申请的信息
-        responseObj = responseObj.filter(item =>
-          item.sfnbcy == "0" || (item.sfnbcy == "1" && item.jfsy == '1'));
+        responseObj = responseObj.filter(item => item.sfnbcy == "0" || (item.sfnbcy == "1" && item.jfsy == '1'));
 
 
         return res.json(responseObj);
@@ -785,7 +844,9 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
     }
 
     let rows_2check = rows_submit.filter(item => item.BLZT == "2" && item.JFSY == "0" && item.Customers.SFNBCY == "1" && !(item.Customers.YHDW.indexOf('不动产软件中心') > -1 || item.Customers.YHDW.indexOf('软件工程中心') > -1));
+
     if (rows_2check && rows_2check.length != 0) {
+
       if (tg) {
         let count = await orm.ApplicationInfo.update({
           BLZT: "3"
@@ -847,7 +908,7 @@ router.post('/checked_applications', catchAsyncErrors(async (req, res) => {
           }
         });
         rows = rows + count[0];
-    
+
         let rows_make = [];
 
         for (let i = 0; i < rows_update.length; i++) {
@@ -1631,7 +1692,7 @@ router.post('/check_batch_applications', catchAsyncErrors(async (req, res) => {
 
   //// 项目经理才能批量审核
   if (userQx.indexOf('7') > -1) {
-    let rows_update = rows_submit.filter(item => item.BLZT == "2" && item.JFSY == "0" &&  item.Customers.SFNBCY == "1" && (item.Customers.YHDW.indexOf('不动产软件中心') > -1 || item.Customers.YHDW.indexOf('软件工程中心') > -1));
+    let rows_update = rows_submit.filter(item => item.BLZT == "2" && item.JFSY == "0" && item.Customers.SFNBCY == "1" && (item.Customers.YHDW.indexOf('不动产软件中心') > -1 || item.Customers.YHDW.indexOf('软件工程中心') > -1));
     if (rows_update && rows_update.length != 0) {
       let count = await orm.ApplicationInfo.update({
         BLZT: "5"
@@ -1675,48 +1736,27 @@ router.post('/check_batch_applications', catchAsyncErrors(async (req, res) => {
 
     let rows_2check = rows_submit.filter(item => item.BLZT == "2" && item.JFSY == "0" && item.Customers.SFNBCY == "1" && !(item.Customers.YHDW.indexOf('不动产软件中心') > -1 || item.Customers.YHDW.indexOf('软件工程中心') > -1));
     if (rows_2check && rows_2check.length != 0) {
-      if (tg) {
-        let count = await orm.ApplicationInfo.update({
-          BLZT: "3"
-        }, {
-          where: {
-            INDEX: {
-              [orm.Sequelize.Op.in]: rows_2check.map(item => item.INDEX)
-            },
-            BLZT: "2"
-          }
-        });
-
-        if (blzt === '2') {
-          if (!openid) {
-            await authOper.sendMessage(lxdh, config.allow_application_sendMessage_nbsq);
-          } else {
-            await wechatOper.sendTemplateMessage(openid, body.access_token, '2a', tg, req.body.shyj, "内部申请审核");
-          }
+      let count = await orm.ApplicationInfo.update({
+        BLZT: "3"
+      }, {
+        where: {
+          INDEX: {
+            [orm.Sequelize.Op.in]: rows_2check.map(item => item.INDEX)
+          },
+          BLZT: "2"
         }
+      });
 
-      } else {
-        let count = await orm.ApplicationInfo.update({
-          BLZT: "9",
-          BZ: `{"shyj":"${req.body.shyj}","shzt":"内部初审"}`
-        }, {
-          where: {
-            INDEX: {
-              [orm.Sequelize.Op.in]: indexes_update
-            },
-            BLZT: "2"
-          }
-        });
-        rows = rows + count[0];
-        if (blzt === '2') {
-          if (!openid) {
-            await authOper.sendMessage(lxdh, config.refuse_application_sendMessage_nbsq);
-          } else {
-            await wechatOper.sendTemplateMessage(openid, body.access_token, '2a', tg, req.body.shyj, "内部申请审核");
-          }
-
+      for (let i = 0; i < contacts.length; i++) {
+        if (!contacts[i].openid) {
+          await authOper.sendMessage(contacts[i].lxdh, config.allow_application_sendMessage_nbsq);
+        } else {
+          await wechatOper.sendTemplateMessage(contacts[i].openid, body.access_token, '2a', true, '', "内部申请审核");
         }
       }
+      return res.json({
+        code: "0000"
+      });
     }
 
   }
@@ -1736,8 +1776,8 @@ router.get('/get_history_amount', catchAsyncErrors(async (req, res) => {
     historyAmount = historyAmount + element.SQSL
   });
   let result = {
-    code:'0000',
-    data:{
+    code: '0000',
+    data: {
       history_amount: historyAmount.toString()
     }
   }
